@@ -9,8 +9,8 @@ import java.util.Hashtable;
 @Slf4j
 public class LevelNotifier extends BaseNotifier {
 
-    private ArrayList<String> levelledSkills = new ArrayList<String>();
-    private Hashtable<String, Integer> currentLevels = new Hashtable<String, Integer>();
+    private final ArrayList<String> levelledSkills = new ArrayList<>();
+    private final Hashtable<String, Integer> currentLevels = new Hashtable<>();
     private boolean sendMessage = false;
     private int ticksWaited = 0;
 
@@ -67,7 +67,7 @@ public class LevelNotifier extends BaseNotifier {
     }
 
     public void handleLevelUp(String skill, int level) {
-        if(checkLevelInterval(level) && currentLevels.get(skill) != null) {
+        if(plugin.config.notifyLevel() && checkLevelInterval(level) && currentLevels.get(skill) != null) {
             if(level == currentLevels.get(skill)) {
                 return;
             }
