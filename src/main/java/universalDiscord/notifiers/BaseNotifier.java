@@ -12,9 +12,7 @@ public abstract class BaseNotifier implements Notifier {
         this.plugin = plugin;
     }
 
-    public void handleNotify() {
-        plugin.messageHandler.createMessage("This is a base notification", false, null);
-    }
+    public abstract void handleNotify();
 
     /**
      * @return True when all data is gathered and the notification is enabled.

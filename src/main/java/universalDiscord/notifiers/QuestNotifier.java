@@ -7,6 +7,7 @@ import net.runelite.api.widgets.WidgetID;
 import net.runelite.api.widgets.WidgetInfo;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
+import universalDiscord.message.MessageBuilder;
 import universalDiscord.notifiers.onevent.WidgetLoadHandler;
 
 import java.util.regex.Matcher;
@@ -29,10 +30,12 @@ public class QuestNotifier extends BaseNotifier implements WidgetLoadHandler {
     }
 
     public void handleNotify() {
-        String notifyMessage = plugin.config.questNotifyMessage()
-                .replaceAll("%USERNAME%", Utils.getPlayerName())
+        String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.questNotifyMessage())
                 .replaceAll("%QUEST%", parseQuestWidget(lastQuestText));
-        plugin.messageHandler.createMessage(notifyMessage, plugin.config.questSendImage(), null);
+
+        plugin.messageHandler.sendMessage(new MessageBuilder(notifyMessage, plugin.config.questSendImage()));
+
+        reset();
     }
 
     @Override
@@ -86,5 +89,9 @@ public class QuestNotifier extends BaseNotifier implements WidgetLoadHandler {
     @Override
     public boolean isEnabled() {
         return plugin.config.notifyQuest();
+    }
+
+    private void reset() {
+        lastQuestText = null;
     }
 }

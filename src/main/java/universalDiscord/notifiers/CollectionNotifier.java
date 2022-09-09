@@ -2,6 +2,7 @@ package universalDiscord.notifiers;
 
 import net.runelite.api.events.ChatMessage;
 import net.runelite.client.util.Text;
+import universalDiscord.message.MessageBuilder;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
 import universalDiscord.notifiers.onevent.ChatMessageHandler;
@@ -31,14 +32,13 @@ public class CollectionNotifier extends BaseNotifier implements ChatMessageHandl
     }
 
     public void handleNotify() {
-        if (lastMatcher != null) {
-            String notifyMessage = plugin.config.collectionNotifyMessage()
-                    .replaceAll("%USERNAME%", Utils.getPlayerName())
-                    .replaceAll("%ITEM%", lastMatcher.group("itemName"));
-            plugin.messageHandler.createMessage(notifyMessage, plugin.config.collectionSendImage(), null);
+        String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.collectionNotifyMessage())
+                .replaceAll("%ITEM%", lastMatcher.group("itemName"));
 
-            lastMatcher = null;
-        }
+        MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.collectionSendImage());
+        plugin.messageHandler.sendMessage(messageBuilder);
+
+        reset();
     }
 
     public void handleChatMessage(ChatMessage chatMessage) {
@@ -47,5 +47,9 @@ public class CollectionNotifier extends BaseNotifier implements ChatMessageHandl
         if (matcher.find()) {
             lastMatcher = matcher;
         }
+    }
+
+    private void reset() {
+        lastMatcher = null;
     }
 }

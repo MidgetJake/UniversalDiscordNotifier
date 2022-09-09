@@ -4,6 +4,7 @@ import net.runelite.api.events.ChatMessage;
 import net.runelite.client.util.Text;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
+import universalDiscord.message.MessageBuilder;
 import universalDiscord.notifiers.onevent.ChatMessageHandler;
 
 import javax.inject.Inject;
@@ -22,12 +23,13 @@ public class PetNotifier extends BaseNotifier implements ChatMessageHandler {
 
     @Override
     public void handleNotify() {
-        String notifyMessage = plugin.config.petNotifyMessage()
-                .replaceAll("%USERNAME%", Utils.getPlayerName());
-        plugin.messageHandler.createMessage(notifyMessage, plugin.config.petSendImage(), null);
+        String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.petNotifyMessage());
+        MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.petSendImage());
+        plugin.messageHandler.sendMessage(messageBuilder);
 
         reset();
     }
+
 
     @Override
     public boolean shouldNotify() {

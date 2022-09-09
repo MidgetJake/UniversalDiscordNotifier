@@ -8,13 +8,16 @@ import net.runelite.api.widgets.WidgetID;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.util.QuantityFormatter;
 import net.runelite.client.util.Text;
-import universalDiscord.DiscordMessageBody;
+import universalDiscord.message.DiscordMessageBody;
+import universalDiscord.message.MessageBuilder;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
 import universalDiscord.notifiers.onevent.ChatMessageHandler;
 import universalDiscord.notifiers.onevent.WidgetLoadHandler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,8 +26,6 @@ public class ClueNotifier extends BaseNotifier implements ChatMessageHandler, Wi
 
     private Matcher lastClueMatcher;
     public HashMap<Integer, Integer> clueItems = new HashMap<>();
-
-    private DiscordMessageBody messageBody;
 
     public ClueNotifier(UniversalDiscordPlugin plugin) {
         super(plugin);
@@ -45,43 +46,35 @@ public class ClueNotifier extends BaseNotifier implements ChatMessageHandler, Wi
     }
 
     public void handleNotify() {
-        messageBody = new DiscordMessageBody();
+        List<DiscordMessageBody.Embed> embeds = new ArrayList<>();
         StringBuilder lootMessage = new StringBuilder();
         long totalPrice = 0;
 
         for (Integer itemId : clueItems.keySet()) {
-            if (lootMessage.length() > 0) {
-                lootMessage.append("\n");
-            }
             int quantity = clueItems.get(itemId);
             int price = plugin.itemManager.getItemPrice(itemId);
-            totalPrice += (long) price * quantity;
-            lootMessage.append(getItem(itemId, clueItems.get(itemId)));
+            long itemPrice = (long) price * quantity;
+            totalPrice += itemPrice;
+            ItemComposition itemComposition = plugin.itemManager.getItemComposition(itemId);
+
+            if (plugin.config.clueShowItems()) {
+                embeds.add(new DiscordMessageBody.Embed(new DiscordMessageBody.UrlEmbed(Utils.getItemImageUrl(itemId))));
+            }
+            String itemText = String.format("%s x %s (%s)\n", quantity, itemComposition.getName(), QuantityFormatter.quantityToStackSize(totalPrice));
+            lootMessage.append(itemText);
         }
 
-        if (totalPrice < plugin.config.clueMinValue()) {
-            return;
-        }
+        if (totalPrice > plugin.config.clueMinValue()) {
+            String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.clueNotifyMessage())
+                    .replaceAll("%CLUE%", lastClueMatcher.group("scrollType"))
+                    .replaceAll("%COUNT%", lastClueMatcher.group("scrollCount"))
+                    .replaceAll("%LOOT%", lootMessage.toString().trim());
 
-        String notifyMessage = plugin.config.clueNotifyMessage()
-                .replaceAll("%USERNAME%", Utils.getPlayerName())
-                .replaceAll("%CLUE%", lastClueMatcher.group("scrollType"))
-                .replaceAll("%COUNT%", lastClueMatcher.group("scrollCount"))
-                .replaceAll("%LOOT%", lootMessage.toString());
-        plugin.messageHandler.createMessage(notifyMessage, plugin.config.clueSendImage(), null);
+            MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.clueSendImage(), (discordMessageBody) -> discordMessageBody.getEmbeds().addAll(embeds));
+            plugin.messageHandler.sendMessage(messageBuilder);
+        }
 
         reset();
-    }
-
-    public String getItem(int itemId, int quantity) {
-        int price = plugin.itemManager.getItemPrice(itemId);
-        long totalPrice = (long) price * quantity;
-        ItemComposition itemComposition = plugin.itemManager.getItemComposition(itemId);
-
-        if (plugin.config.clueShowItems()) {
-            messageBody.getEmbeds().add(new DiscordMessageBody.Embed(new DiscordMessageBody.UrlEmbed(Utils.getItemImageUrl(itemId))));
-        }
-        return String.format("%s x %s (%s)", quantity, itemComposition.getName(), QuantityFormatter.quantityToStackSize(totalPrice));
     }
 
     @Override

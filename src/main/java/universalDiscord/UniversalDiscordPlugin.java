@@ -17,6 +17,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.loottracker.LootReceived;
 import net.runelite.client.ui.DrawManager;
 import okhttp3.OkHttpClient;
+import universalDiscord.message.DiscordMessageHandler;
 import universalDiscord.notifiers.*;
 import universalDiscord.notifiers.onevent.ChatMessageHandler;
 import universalDiscord.notifiers.onevent.WidgetLoadHandler;

@@ -1,4 +1,4 @@
-package universalDiscord;
+package universalDiscord.message;
 
 import lombok.Data;
 import java.util.ArrayList;

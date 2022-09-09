@@ -2,6 +2,7 @@ package universalDiscord.notifiers;
 
 import net.runelite.api.events.ChatMessage;
 import net.runelite.client.util.Text;
+import universalDiscord.message.MessageBuilder;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
 import universalDiscord.notifiers.onevent.ChatMessageHandler;
@@ -28,20 +29,16 @@ public class SlayerNotifier extends BaseNotifier implements ChatMessageHandler {
 
     @Override
     public void handleNotify() {
-        String notifyMessage = plugin.config.slayerNotifyMessage()
-                .replaceAll("%USERNAME%", Utils.getPlayerName())
+        String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.slayerNotifyMessage())
                 .replaceAll("%TASK%", slayerTask)
                 .replaceAll("%TASKCOUNT%", slayerTasksCompleted)
                 .replaceAll("%POINTS%", slayerPoints);
-        plugin.messageHandler.createMessage(notifyMessage, plugin.config.slayerSendImage(), null);
 
-        // Cleanup for the next message
-        slayerTask = null;
-        slayerPoints = null;
-        slayerTasksCompleted = null;
+        MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.slayerSendImage());
 
-        lastPointMatcher = null;
-        lastTaskMatcher = null;
+        plugin.messageHandler.sendMessage(messageBuilder);
+
+        reset();
     }
 
     @Override
@@ -81,5 +78,14 @@ public class SlayerNotifier extends BaseNotifier implements ChatMessageHandler {
                 }
             }
         }
+    }
+
+    private void reset() {
+        slayerTask = null;
+        slayerPoints = null;
+        slayerTasksCompleted = null;
+
+        lastPointMatcher = null;
+        lastTaskMatcher = null;
     }
 }

@@ -7,12 +7,15 @@ import net.runelite.client.game.ItemStack;
 import net.runelite.client.plugins.loottracker.LootReceived;
 import net.runelite.client.util.QuantityFormatter;
 import net.runelite.http.api.loottracker.LootRecordType;
-import universalDiscord.DiscordMessageBody;
+import universalDiscord.message.DiscordMessageBody;
+import universalDiscord.message.MessageBuilder;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 
 public class LootNotifier extends BaseNotifier {
@@ -38,7 +41,7 @@ public class LootNotifier extends BaseNotifier {
     }
 
     public void handleNotify() {
-        DiscordMessageBody messageBody = new DiscordMessageBody();
+        List<DiscordMessageBody.Embed> embeds = new ArrayList<>();
         StringBuilder lootMessage = new StringBuilder();
         long totalStackValue = 0;
 
@@ -51,7 +54,7 @@ public class LootNotifier extends BaseNotifier {
             ItemComposition itemComposition = plugin.itemManager.getItemComposition(itemId);
             lootMessage.append(String.format("%s x %s (%s)\n", quantity, itemComposition.getName(), QuantityFormatter.quantityToStackSize(totalPrice)));
             if (plugin.config.lootIcons()) {
-                messageBody.getEmbeds().add(new DiscordMessageBody.Embed(new DiscordMessageBody.UrlEmbed(Utils.getItemImageUrl(itemId))));
+                embeds.add(new DiscordMessageBody.Embed(new DiscordMessageBody.UrlEmbed(Utils.getItemImageUrl(itemId))));
             }
 
             totalStackValue += totalPrice;
@@ -59,13 +62,14 @@ public class LootNotifier extends BaseNotifier {
 
         if (totalStackValue >= plugin.config.minLootValue()) {
             String lootString = lootMessage.toString();
-            String notifyMessage = plugin.config.lootNotifyMessage()
-                    .replaceAll("%USERNAME%", Utils.getPlayerName())
+            String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.lootNotifyMessage())
                     .replaceAll("%LOOT%", lootString)
                     .replaceAll("%SOURCE%", dropper)
                     .replaceAll("%TOTAL_VALUE%", String.valueOf(totalStackValue))
                     .trim();
-            plugin.messageHandler.createMessage(notifyMessage, plugin.config.lootSendImage(), messageBody);
+
+            MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.lootSendImage(), (discordMessage) -> discordMessage.getEmbeds().addAll(embeds));
+            plugin.messageHandler.sendMessage(messageBuilder);
         }
 
         reset();

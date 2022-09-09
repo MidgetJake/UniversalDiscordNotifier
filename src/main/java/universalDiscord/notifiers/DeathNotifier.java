@@ -1,6 +1,7 @@
 package universalDiscord.notifiers;
 
 import net.runelite.api.events.ActorDeath;
+import universalDiscord.message.MessageBuilder;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
 
@@ -17,10 +18,12 @@ public class DeathNotifier extends BaseNotifier {
 
     @Override
     public void handleNotify() {
-        String notifyMessage = plugin.config.deathNotifyMessage()
-                .replaceAll("%USERNAME%", Utils.getPlayerName());
-        plugin.messageHandler.createMessage(notifyMessage, plugin.config.deathSendImage(), null);
-        lastActorDeath = null;
+        String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.deathNotifyMessage());
+
+        MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.deathSendImage());
+        plugin.messageHandler.sendMessage(messageBuilder);
+
+        reset();
     }
 
     @Override
@@ -33,5 +36,9 @@ public class DeathNotifier extends BaseNotifier {
     @Override
     public boolean isEnabled() {
         return plugin.config.notifyDeath();
+    }
+
+    private void reset() {
+        lastActorDeath = null;
     }
 }

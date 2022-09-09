@@ -1,4 +1,4 @@
-package universalDiscord;
+package universalDiscord.message;
 
 import static net.runelite.http.api.RuneLiteAPI.GSON;
 
@@ -6,6 +6,8 @@ import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import okhttp3.internal.annotations.EverythingIsNonNull;
+import universalDiscord.UniversalDiscordPlugin;
+import universalDiscord.Utils;
 
 import javax.inject.Inject;
 import java.awt.image.BufferedImage;
@@ -22,19 +24,19 @@ public class DiscordMessageHandler {
         this.plugin = plugin;
     }
 
-    public void createMessage(String message, boolean sendImage, DiscordMessageBody mBody) {
+    public void sendMessage(MessageBuilder messageBuilder) {
         DiscordMessageBody messageBody = new DiscordMessageBody();
-        if (mBody != null) {
-            messageBody = mBody;
-        }
+        messageBody.setContent(messageBuilder.text);
 
-        messageBody.setContent(message);
+        if (messageBuilder.beforeDiscordMessageSend != null) {
+            messageBuilder.beforeDiscordMessageSend.call(messageBody);
+        }
 
         MultipartBody.Builder reqBodyBuilder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("payload_json", GSON.toJson(messageBody));
 
-        if (sendImage) {
+        if (messageBuilder.sendScreenImage) {
             plugin.drawManager.requestNextFrameListener(image -> {
                 BufferedImage bufferedImage = (BufferedImage) image;
                 byte[] imageBytes;
