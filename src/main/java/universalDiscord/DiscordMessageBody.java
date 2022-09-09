@@ -10,12 +10,12 @@ public class DiscordMessageBody {
     private List<Embed> embeds = new ArrayList<>();
 
     @Data
-    static class Embed {
+    public static class Embed {
         final UrlEmbed image;
     }
 
     @Data
-    static class UrlEmbed {
+    public static class UrlEmbed {
         final String url;
     }
 }

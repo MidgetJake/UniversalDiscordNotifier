@@ -1,6 +1,8 @@
-package universalDiscord;
+package universalDiscord.notifiers;
 
 import lombok.extern.slf4j.Slf4j;
+import universalDiscord.UniversalDiscordPlugin;
+import universalDiscord.Utils;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -17,6 +19,16 @@ public class LevelNotifier extends BaseNotifier {
     @Inject
     public LevelNotifier(UniversalDiscordPlugin plugin) {
         super(plugin);
+    }
+
+    @Override
+    public boolean shouldNotify() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return plugin.config.notifyLevel();
     }
 
     public void reset() {
@@ -67,7 +79,7 @@ public class LevelNotifier extends BaseNotifier {
     }
 
     public void handleLevelUp(String skill, int level) {
-        if(plugin.config.notifyLevel() && checkLevelInterval(level) && currentLevels.get(skill) != null) {
+        if(isEnabled() && checkLevelInterval(level) && currentLevels.get(skill) != null) {
             if(level == currentLevels.get(skill)) {
                 return;
             }
