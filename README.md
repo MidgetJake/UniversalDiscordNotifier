@@ -26,7 +26,7 @@ You can have multiple webhooks setup at the same time, you simply separate them 
 ---
 ## Other Setup
 
-As the collection notification uses the chat messageBuilder to determine when a collection log item has been added, these messages
+As the collection notification uses the chat message to determine when a collection log item has been added, these messages
 need to be enable in game. You can find this option in `Settings > All Settings > Chat > Collection log - New addition notification`
 
 ![img.png](img.png)
@@ -67,4 +67,4 @@ contain some bits that will be replaced with in-game values.
 
 `%COUNT%` will be replaced by the number of times that you have completed that tier of clue scrolls
 
-All of these are optional and can be omitted from the messageBuilder if desired.
+All of these are optional and can be omitted from the message if desired.
