@@ -68,6 +68,7 @@ public class ClueNotifier extends BaseNotifier implements ChatMessageHandler, Wi
             String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.clueNotifyMessage())
                     .replaceAll("%CLUE%", lastClueMatcher.group("scrollType"))
                     .replaceAll("%COUNT%", lastClueMatcher.group("scrollCount"))
+                    .replaceAll("%TOTAL_VALUE%", QuantityFormatter.quantityToStackSize(totalPrice))
                     .replaceAll("%LOOT%", lootMessage.toString().trim());
 
             MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.clueSendImage(), (discordMessageBody) -> discordMessageBody.getEmbeds().addAll(embeds));

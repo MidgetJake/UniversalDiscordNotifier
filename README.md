@@ -50,6 +50,8 @@ contain some bits that will be replaced with in-game values.
 
 `%SOURCE%` will be replace with the source that dropped or gave the loot
 
+`%TOTAL_VALUE%` will be replaced with the total value of the loot
+
 #### Slayer:
 `%TASK%` will be replaced with the task that you have completed. E.g. `50 monkeys`
 
@@ -66,5 +68,7 @@ contain some bits that will be replaced with in-game values.
 `%LOOT%` will be replaced with the loot that was obtained from the casket
 
 `%COUNT%` will be replaced by the number of times that you have completed that tier of clue scrolls
+
+`%TOTAL_VALUE%` will be replaced with the total value of the clue
 
 All of these are optional and can be omitted from the message if desired.

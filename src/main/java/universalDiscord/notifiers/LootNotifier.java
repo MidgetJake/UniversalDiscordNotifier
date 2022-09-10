@@ -65,7 +65,7 @@ public class LootNotifier extends BaseNotifier {
             String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.lootNotifyMessage())
                     .replaceAll("%LOOT%", lootString)
                     .replaceAll("%SOURCE%", dropper)
-                    .replaceAll("%TOTAL_VALUE%", String.valueOf(totalStackValue))
+                    .replaceAll("%TOTAL_VALUE%", QuantityFormatter.quantityToStackSize(totalStackValue))
                     .trim();
 
             MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.lootSendImage(), (discordMessage) -> discordMessage.getEmbeds().addAll(embeds));
