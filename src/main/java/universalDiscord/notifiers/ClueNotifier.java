@@ -48,27 +48,27 @@ public class ClueNotifier extends BaseNotifier implements ChatMessageHandler, Wi
     public void handleNotify() {
         List<DiscordMessageBody.Embed> embeds = new ArrayList<>();
         StringBuilder lootMessage = new StringBuilder();
-        long totalPrice = 0;
+        long totalClueValue = 0;
 
         for (Integer itemId : clueItems.keySet()) {
             int quantity = clueItems.get(itemId);
             int price = plugin.itemManager.getItemPrice(itemId);
-            long itemPrice = (long) price * quantity;
-            totalPrice += itemPrice;
+            long itemStackPrice = (long) price * quantity;
+            totalClueValue += itemStackPrice;
             ItemComposition itemComposition = plugin.itemManager.getItemComposition(itemId);
 
             if (plugin.config.clueShowItems()) {
                 embeds.add(new DiscordMessageBody.Embed(new DiscordMessageBody.UrlEmbed(Utils.getItemImageUrl(itemId))));
             }
-            String itemText = String.format("%s x %s (%s)\n", quantity, itemComposition.getName(), QuantityFormatter.quantityToStackSize(totalPrice));
+            String itemText = String.format("%s x %s (%s)\n", quantity, itemComposition.getName(), QuantityFormatter.quantityToStackSize(itemStackPrice));
             lootMessage.append(itemText);
         }
 
-        if (totalPrice > plugin.config.clueMinValue()) {
+        if (totalClueValue > plugin.config.clueMinValue()) {
             String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.clueNotifyMessage())
                     .replaceAll("%CLUE%", lastClueMatcher.group("scrollType"))
                     .replaceAll("%COUNT%", lastClueMatcher.group("scrollCount"))
-                    .replaceAll("%TOTAL_VALUE%", QuantityFormatter.quantityToStackSize(totalPrice))
+                    .replaceAll("%TOTAL_VALUE%", QuantityFormatter.quantityToStackSize(totalClueValue))
                     .replaceAll("%LOOT%", lootMessage.toString().trim());
 
             MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.clueSendImage(), (discordMessageBody) -> discordMessageBody.getEmbeds().addAll(embeds));

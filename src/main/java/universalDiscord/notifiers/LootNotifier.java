@@ -43,29 +43,29 @@ public class LootNotifier extends BaseNotifier {
     public void handleNotify() {
         List<DiscordMessageBody.Embed> embeds = new ArrayList<>();
         StringBuilder lootMessage = new StringBuilder();
-        long totalStackValue = 0;
+        long totalLootValue = 0;
 
         for (ItemStack item : Utils.reduceItemStack(receivedLoot)) {
             int itemId = item.getId();
             int quantity = item.getQuantity();
             int price = plugin.itemManager.getItemPrice(itemId);
-            long totalPrice = (long) price * quantity;
+            long itemStackPrice = (long) price * quantity;
 
             ItemComposition itemComposition = plugin.itemManager.getItemComposition(itemId);
-            lootMessage.append(String.format("%s x %s (%s)\n", quantity, itemComposition.getName(), QuantityFormatter.quantityToStackSize(totalPrice)));
+            lootMessage.append(String.format("%s x %s (%s)\n", quantity, itemComposition.getName(), QuantityFormatter.quantityToStackSize(itemStackPrice)));
             if (plugin.config.lootIcons()) {
                 embeds.add(new DiscordMessageBody.Embed(new DiscordMessageBody.UrlEmbed(Utils.getItemImageUrl(itemId))));
             }
 
-            totalStackValue += totalPrice;
+            totalLootValue += itemStackPrice;
         }
 
-        if (totalStackValue >= plugin.config.minLootValue()) {
+        if (totalLootValue >= plugin.config.minLootValue()) {
             String lootString = lootMessage.toString();
             String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.lootNotifyMessage())
                     .replaceAll("%LOOT%", lootString)
                     .replaceAll("%SOURCE%", dropper)
-                    .replaceAll("%TOTAL_VALUE%", QuantityFormatter.quantityToStackSize(totalStackValue))
+                    .replaceAll("%TOTAL_VALUE%", QuantityFormatter.quantityToStackSize(totalLootValue))
                     .trim();
 
             MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.lootSendImage(), (discordMessage) -> discordMessage.getEmbeds().addAll(embeds));
