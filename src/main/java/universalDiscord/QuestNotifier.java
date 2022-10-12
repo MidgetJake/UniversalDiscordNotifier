@@ -11,6 +11,7 @@ public class QuestNotifier extends BaseNotifier{
     }
 
     public void handleNotify(String questText) {
+        if (plugin.isSpeedrunWorld()) return;
         String notifyMessage = plugin.config.questNotifyMessage()
                 .replaceAll("%USERNAME%", Utils.getPlayerName())
                 .replaceAll("%QUEST%", parseQuestWidget(questText));

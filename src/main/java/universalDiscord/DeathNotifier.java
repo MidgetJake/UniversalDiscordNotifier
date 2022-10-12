@@ -11,6 +11,7 @@ public class DeathNotifier extends BaseNotifier {
 
     @Override
     public void handleNotify() {
+        if (plugin.isSpeedrunWorld()) return;
         String notifyMessage = plugin.config.deathNotifyMessage()
                 .replaceAll("%USERNAME%", Utils.getPlayerName());
         plugin.messageHandler.createMessage(notifyMessage, plugin.config.deathSendImage(), null);
