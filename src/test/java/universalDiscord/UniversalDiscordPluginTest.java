@@ -1,10 +1,9 @@
-package com.example;
+package universalDiscord;
 
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;
-import universalDiscord.UniversalDiscordPlugin;
 
-public class ExamplePluginTest
+public class UniversalDiscordPluginTest
 {
 	public static void main(String[] args) throws Exception
 	{
