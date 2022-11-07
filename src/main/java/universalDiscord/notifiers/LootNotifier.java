@@ -72,7 +72,7 @@ public class LootNotifier extends BaseNotifier {
                     .replaceAll("%SOURCE%", dropper)
                     .replaceAll("%TOTAL_VALUE%", QuantityFormatter.quantityToStackSize(totalLootValue))
                     .trim();
-            webhookBody.setContent(notifyMessage);
+            webhookBody.getEmbeds().add(0, Embed.builder().description(notifyMessage).build());
 
             MessageBuilder messageBuilder = new MessageBuilder(webhookBody, plugin.config.lootSendImage());
             plugin.messageHandler.sendMessage(messageBuilder);

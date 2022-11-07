@@ -75,7 +75,7 @@ public class ClueNotifier extends BaseNotifier implements ChatMessageHandler, Wi
                     .replaceAll("%COUNT%", lastClueMatcher.group("scrollCount"))
                     .replaceAll("%TOTAL_VALUE%", QuantityFormatter.quantityToStackSize(totalClueValue))
                     .replaceAll("%LOOT%", lootMessage.toString().trim());
-            webhookBody.setContent(notifyMessage);
+            webhookBody.getEmbeds().add(0, Embed.builder().description(notifyMessage).build());
 
             MessageBuilder messageBuilder = new MessageBuilder(webhookBody, plugin.config.clueSendImage());
             plugin.messageHandler.sendMessage(messageBuilder);
