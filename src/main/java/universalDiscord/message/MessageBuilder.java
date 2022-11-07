@@ -1,19 +1,46 @@
 package universalDiscord.message;
 
+import lombok.NonNull;
+import universalDiscord.Utils;
+import universalDiscord.message.discord.Author;
+import universalDiscord.message.discord.Embed;
+import universalDiscord.message.discord.WebhookBody;
+
 public class MessageBuilder {
-    public String text;
+    public WebhookBody webhookBody;
     public boolean sendScreenImage;
 
-    public BeforeDiscordMessageSend beforeDiscordMessageSend;
+    public static @NonNull MessageBuilder textAsEmbed(String text, boolean sendScreenImage) {
+        final WebhookBody body = new WebhookBody();
+        final Embed embed = Embed.builder()
+                .description(text)
+                .build();
 
-    public MessageBuilder(String text, boolean sendScreenImage) {
-        this(text, sendScreenImage, null);
+        body.getEmbeds().add(embed);
+
+        return new MessageBuilder(body, sendScreenImage);
     }
 
-    public MessageBuilder(String text, boolean sendScreenImage, BeforeDiscordMessageSend beforeDiscordMessageSend) {
-        this.text = text;
+    public MessageBuilder(WebhookBody webhookBody, boolean sendScreenImage) {
+        this.webhookBody = webhookBody;
         this.sendScreenImage = sendScreenImage;
-        this.beforeDiscordMessageSend = beforeDiscordMessageSend;
     }
+
+    public void setPlayerAsAuthorForEmbeds() {
+        Author author = playerAsAuthor();
+        for (Embed embed : webhookBody.getEmbeds()) {
+            embed.setAuthor(author);
+        }
+    }
+
+    public Author playerAsAuthor() {
+        return Author.builder()
+                .name(Utils.getPlayerName())
+                .icon_url(Utils.getPlayerBadgeUrl())
+                .url(Utils.getPlayerUrl())
+                .build();
+    }
+
+
 }
 

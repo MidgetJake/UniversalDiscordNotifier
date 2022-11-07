@@ -7,7 +7,9 @@ import net.runelite.client.game.ItemStack;
 import net.runelite.client.plugins.loottracker.LootReceived;
 import net.runelite.client.util.QuantityFormatter;
 import net.runelite.http.api.loottracker.LootRecordType;
-import universalDiscord.message.DiscordMessageBody;
+import universalDiscord.message.discord.Embed;
+import universalDiscord.message.discord.Image;
+import universalDiscord.message.discord.WebhookBody;
 import universalDiscord.message.MessageBuilder;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
@@ -41,7 +43,7 @@ public class LootNotifier extends BaseNotifier {
     }
 
     public void handleNotify() {
-        List<DiscordMessageBody.Embed> embeds = new ArrayList<>();
+        WebhookBody webhookBody = new WebhookBody();
         StringBuilder lootMessage = new StringBuilder();
         long totalLootValue = 0;
 
@@ -54,7 +56,10 @@ public class LootNotifier extends BaseNotifier {
             ItemComposition itemComposition = plugin.itemManager.getItemComposition(itemId);
             lootMessage.append(String.format("%s x %s (%s)\n", quantity, itemComposition.getName(), QuantityFormatter.quantityToStackSize(itemStackPrice)));
             if (plugin.config.lootIcons()) {
-                embeds.add(new DiscordMessageBody.Embed(new DiscordMessageBody.UrlEmbed(Utils.getItemImageUrl(itemId))));
+                Embed embed = Embed.builder()
+                        .image(new Image(Utils.getItemImageUrl(itemId)))
+                        .build();
+                webhookBody.getEmbeds().add(embed);
             }
 
             totalLootValue += itemStackPrice;
@@ -67,8 +72,9 @@ public class LootNotifier extends BaseNotifier {
                     .replaceAll("%SOURCE%", dropper)
                     .replaceAll("%TOTAL_VALUE%", QuantityFormatter.quantityToStackSize(totalLootValue))
                     .trim();
+            webhookBody.setContent(notifyMessage);
 
-            MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.lootSendImage(), (discordMessage) -> discordMessage.getEmbeds().addAll(embeds));
+            MessageBuilder messageBuilder = new MessageBuilder(webhookBody, plugin.config.lootSendImage());
             plugin.messageHandler.sendMessage(messageBuilder);
         }
 

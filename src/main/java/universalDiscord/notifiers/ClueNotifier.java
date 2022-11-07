@@ -8,7 +8,9 @@ import net.runelite.api.widgets.WidgetID;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.util.QuantityFormatter;
 import net.runelite.client.util.Text;
-import universalDiscord.message.DiscordMessageBody;
+import universalDiscord.message.discord.Embed;
+import universalDiscord.message.discord.Image;
+import universalDiscord.message.discord.WebhookBody;
 import universalDiscord.message.MessageBuilder;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
@@ -46,7 +48,7 @@ public class ClueNotifier extends BaseNotifier implements ChatMessageHandler, Wi
     }
 
     public void handleNotify() {
-        List<DiscordMessageBody.Embed> embeds = new ArrayList<>();
+        WebhookBody webhookBody = new WebhookBody();
         StringBuilder lootMessage = new StringBuilder();
         long totalClueValue = 0;
 
@@ -58,7 +60,10 @@ public class ClueNotifier extends BaseNotifier implements ChatMessageHandler, Wi
             ItemComposition itemComposition = plugin.itemManager.getItemComposition(itemId);
 
             if (plugin.config.clueShowItems()) {
-                embeds.add(new DiscordMessageBody.Embed(new DiscordMessageBody.UrlEmbed(Utils.getItemImageUrl(itemId))));
+                Embed embed = Embed.builder()
+                        .image(new Image(Utils.getItemImageUrl(itemId)))
+                        .build();
+                webhookBody.getEmbeds().add(embed);
             }
             String itemText = String.format("%s x %s (%s)\n", quantity, itemComposition.getName(), QuantityFormatter.quantityToStackSize(itemStackPrice));
             lootMessage.append(itemText);
@@ -70,8 +75,9 @@ public class ClueNotifier extends BaseNotifier implements ChatMessageHandler, Wi
                     .replaceAll("%COUNT%", lastClueMatcher.group("scrollCount"))
                     .replaceAll("%TOTAL_VALUE%", QuantityFormatter.quantityToStackSize(totalClueValue))
                     .replaceAll("%LOOT%", lootMessage.toString().trim());
+            webhookBody.setContent(notifyMessage);
 
-            MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.clueSendImage(), (discordMessageBody) -> discordMessageBody.getEmbeds().addAll(embeds));
+            MessageBuilder messageBuilder = new MessageBuilder(webhookBody, plugin.config.clueSendImage());
             plugin.messageHandler.sendMessage(messageBuilder);
         }
 

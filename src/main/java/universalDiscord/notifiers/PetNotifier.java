@@ -24,7 +24,7 @@ public class PetNotifier extends BaseNotifier implements ChatMessageHandler {
     @Override
     public void handleNotify() {
         String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.petNotifyMessage());
-        MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.petSendImage());
+        MessageBuilder messageBuilder = MessageBuilder.textAsEmbed(notifyMessage, plugin.config.petSendImage());
         plugin.messageHandler.sendMessage(messageBuilder);
 
         reset();

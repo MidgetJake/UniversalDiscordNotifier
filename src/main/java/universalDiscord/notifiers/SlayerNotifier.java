@@ -34,7 +34,7 @@ public class SlayerNotifier extends BaseNotifier implements ChatMessageHandler {
                 .replaceAll("%TASKCOUNT%", slayerTasksCompleted)
                 .replaceAll("%POINTS%", slayerPoints);
 
-        MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.slayerSendImage());
+        MessageBuilder messageBuilder = MessageBuilder.textAsEmbed(notifyMessage, plugin.config.slayerSendImage());
 
         plugin.messageHandler.sendMessage(messageBuilder);
 
