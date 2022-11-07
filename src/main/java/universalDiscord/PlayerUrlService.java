@@ -1,11 +1,17 @@
 package universalDiscord;
 
 public enum PlayerUrlService {
-    NONE,
-    OSRS_HISCORE,
-    CRYSTAL_MATH_LABS,
-    TEMPLEOSRS,
-    WISEOLDMAN;
+    NONE("None"),
+    OSRS_HISCORE("OSRS HiScore"),
+    CRYSTAL_MATH_LABS("Crystal Math Labs"),
+    TEMPLEOSRS("Temple OSRS"),
+    WISEOLDMAN("Wise Old Man");
+
+    private final String name;
+
+    PlayerUrlService(String name) {
+        this.name = name;
+    }
 
     public String playerUrl(String playerName) {
         switch (this) {
@@ -25,19 +31,6 @@ public enum PlayerUrlService {
 
     @Override
     public String toString() {
-        switch (this) {
-            case OSRS_HISCORE:
-                return "OSRS HiScore";
-            case WISEOLDMAN:
-                return "Wise Old Man";
-            case CRYSTAL_MATH_LABS:
-                return "Crystal Math Labs";
-            case TEMPLEOSRS:
-                return "Temple OSRS";
-            case NONE:
-                return "None";
-            default:
-                return null;
-        }
+        return name;
     }
 }
