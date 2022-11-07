@@ -21,7 +21,7 @@ public interface UniversalDiscordConfig extends Config {
     @ConfigItem(
             keyName = "playerUrl",
             name = "Player url",
-            description = "The url/service used for your looking up your account",
+            description = "The url/service used for looking up your account",
             position = 2
     )
     default PlayerUrlService playerUrlService() {
