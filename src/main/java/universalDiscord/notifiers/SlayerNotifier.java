@@ -2,9 +2,9 @@ package universalDiscord.notifiers;
 
 import net.runelite.api.events.ChatMessage;
 import net.runelite.client.util.Text;
-import universalDiscord.message.MessageBuilder;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
+import universalDiscord.message.MessageBuilder;
 import universalDiscord.notifiers.onevent.ChatMessageHandler;
 
 import javax.inject.Inject;

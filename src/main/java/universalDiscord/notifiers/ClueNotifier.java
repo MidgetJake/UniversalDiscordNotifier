@@ -8,18 +8,16 @@ import net.runelite.api.widgets.WidgetID;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.util.QuantityFormatter;
 import net.runelite.client.util.Text;
+import universalDiscord.UniversalDiscordPlugin;
+import universalDiscord.Utils;
+import universalDiscord.message.MessageBuilder;
 import universalDiscord.message.discord.Embed;
 import universalDiscord.message.discord.Image;
 import universalDiscord.message.discord.WebhookBody;
-import universalDiscord.message.MessageBuilder;
-import universalDiscord.UniversalDiscordPlugin;
-import universalDiscord.Utils;
 import universalDiscord.notifiers.onevent.ChatMessageHandler;
 import universalDiscord.notifiers.onevent.WidgetLoadHandler;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

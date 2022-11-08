@@ -1,9 +1,9 @@
 package universalDiscord.notifiers;
 
 import lombok.extern.slf4j.Slf4j;
-import universalDiscord.message.MessageBuilder;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
+import universalDiscord.message.MessageBuilder;
 
 import javax.inject.Inject;
 import java.util.ArrayList;

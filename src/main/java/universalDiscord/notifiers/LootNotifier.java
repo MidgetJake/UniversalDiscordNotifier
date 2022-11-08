@@ -7,17 +7,15 @@ import net.runelite.client.game.ItemStack;
 import net.runelite.client.plugins.loottracker.LootReceived;
 import net.runelite.client.util.QuantityFormatter;
 import net.runelite.http.api.loottracker.LootRecordType;
+import universalDiscord.UniversalDiscordPlugin;
+import universalDiscord.Utils;
+import universalDiscord.message.MessageBuilder;
 import universalDiscord.message.discord.Embed;
 import universalDiscord.message.discord.Image;
 import universalDiscord.message.discord.WebhookBody;
-import universalDiscord.message.MessageBuilder;
-import universalDiscord.UniversalDiscordPlugin;
-import universalDiscord.Utils;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 
 public class LootNotifier extends BaseNotifier {

@@ -1,9 +1,9 @@
 package universalDiscord.notifiers;
 
 import net.runelite.api.events.ActorDeath;
-import universalDiscord.message.MessageBuilder;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
+import universalDiscord.message.MessageBuilder;
 
 import javax.inject.Inject;
 import java.util.Objects;
