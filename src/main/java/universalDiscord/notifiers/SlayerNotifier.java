@@ -30,7 +30,7 @@ public class SlayerNotifier extends BaseNotifier implements ChatMessageHandler {
     @Override
     public void handleNotify() {
         String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.slayerNotifyMessage())
-                .replaceAll("%TASK%", slayerTask)
+                .replaceAll("%TASK%", Utils.asMarkdownWikiUrl(slayerTask))
                 .replaceAll("%TASKCOUNT%", slayerTasksCompleted)
                 .replaceAll("%POINTS%", slayerPoints);
 

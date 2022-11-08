@@ -54,7 +54,7 @@ public class LootNotifier extends BaseNotifier {
             long itemStackPrice = (long) price * quantity;
 
             ItemComposition itemComposition = plugin.itemManager.getItemComposition(itemId);
-            lootMessage.append(String.format("%s x %s (%s)\n", quantity, itemComposition.getName(), QuantityFormatter.quantityToStackSize(itemStackPrice)));
+            lootMessage.append(String.format("%s x %s (%s)\n", quantity, Utils.asMarkdownWikiUrl(itemComposition.getName()), QuantityFormatter.quantityToStackSize(itemStackPrice)));
             if (plugin.config.lootIcons()) {
                 Embed embed = Embed.builder()
                         .image(new Image(Utils.getItemImageUrl(itemId)))
@@ -69,7 +69,7 @@ public class LootNotifier extends BaseNotifier {
             String lootString = lootMessage.toString();
             String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.lootNotifyMessage())
                     .replaceAll("%LOOT%", lootString)
-                    .replaceAll("%SOURCE%", dropper)
+                    .replaceAll("%SOURCE%", Utils.asMarkdownWikiUrl(dropper))
                     .replaceAll("%TOTAL_VALUE%", QuantityFormatter.quantityToStackSize(totalLootValue))
                     .trim();
             webhookBody.getEmbeds().add(0, Embed.builder().description(notifyMessage).build());

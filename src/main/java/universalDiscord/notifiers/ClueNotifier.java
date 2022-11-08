@@ -65,13 +65,13 @@ public class ClueNotifier extends BaseNotifier implements ChatMessageHandler, Wi
                         .build();
                 webhookBody.getEmbeds().add(embed);
             }
-            String itemText = String.format("%s x %s (%s)\n", quantity, itemComposition.getName(), QuantityFormatter.quantityToStackSize(itemStackPrice));
+            String itemText = String.format("%s x %s (%s)\n", quantity, Utils.asMarkdownWikiUrl(itemComposition.getName()), QuantityFormatter.quantityToStackSize(itemStackPrice));
             lootMessage.append(itemText);
         }
 
         if (totalClueValue > plugin.config.clueMinValue()) {
             String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.clueNotifyMessage())
-                    .replaceAll("%CLUE%", lastClueMatcher.group("scrollType"))
+                    .replaceAll("%CLUE%", Utils.asMarkdownWikiUrl(lastClueMatcher.group("scrollType")))
                     .replaceAll("%COUNT%", lastClueMatcher.group("scrollCount"))
                     .replaceAll("%TOTAL_VALUE%", QuantityFormatter.quantityToStackSize(totalClueValue))
                     .replaceAll("%LOOT%", lootMessage.toString().trim());

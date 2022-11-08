@@ -8,6 +8,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -103,5 +105,13 @@ public class Utils {
 
     public static String getItemImageUrl(int itemId) {
         return "https://static.runelite.net/cache/item/icon/" + itemId + ".png";
+    }
+
+    public static String asMarkdownWikiUrl(String search) {
+        return "[" + search + "](" + getWikiUrl(search) + ")";
+    }
+
+    public static String getWikiUrl(String search) {
+        return "https://oldschool.runescape.wiki/w/Special:Search?search=" + URLEncoder.encode(search, StandardCharsets.UTF_8);
     }
 }
