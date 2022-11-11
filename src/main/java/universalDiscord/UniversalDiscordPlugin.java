@@ -12,10 +12,12 @@ import net.runelite.client.events.NotificationFired;
 import net.runelite.client.events.NpcLootReceived;
 import net.runelite.client.events.PlayerLootReceived;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.game.WorldService;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.loottracker.LootReceived;
 import net.runelite.client.ui.DrawManager;
+import net.runelite.http.api.worlds.WorldResult;
 import okhttp3.OkHttpClient;
 import universalDiscord.message.DiscordMessageHandler;
 import universalDiscord.notifiers.*;
@@ -50,6 +52,10 @@ public class UniversalDiscordPlugin extends Plugin {
     private final SlayerNotifier slayerNotifier = new SlayerNotifier(this);
     private final QuestNotifier questNotifier = new QuestNotifier(this);
     private final ClueNotifier clueNotifier = new ClueNotifier(this);
+
+
+    @Inject
+    private WorldService worldService;
 
 
     @Override
@@ -160,5 +166,17 @@ public class UniversalDiscordPlugin extends Plugin {
                 notifier.handleNotify();
             }
         }
+    }
+
+    final String SPEED_RUN_WORLD_ACTIVITY = "Speedrunning World";
+
+    public boolean isSpeedrunWorld() {
+        WorldResult worldresult = worldService.getWorlds();
+        if (worldresult == null) {
+            log.warn("Failed to get worlds, assuming non-speedrun world");
+            return false;
+        }
+        net.runelite.http.api.worlds.World w = worldresult.findWorld(client.getWorld());
+        return w.getActivity().equals(SPEED_RUN_WORLD_ACTIVITY);
     }
 }

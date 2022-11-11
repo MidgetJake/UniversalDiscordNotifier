@@ -30,6 +30,7 @@ public class QuestNotifier extends BaseNotifier implements WidgetLoadHandler {
     }
 
     public void handleNotify() {
+        if (plugin.isSpeedrunWorld()) return;
         String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.questNotifyMessage())
                 .replaceAll("%QUEST%", Utils.asMarkdownWikiUrl(parseQuestWidget(lastQuestText)));
 
