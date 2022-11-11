@@ -55,7 +55,7 @@ public class LevelNotifier extends BaseNotifier {
 
     @Override
     public boolean isEnabled() {
-        return plugin.config.notifyLevel();
+        return plugin.config.notifyLevel() && !Utils.isQuestSpeedRunningWorld();
     }
 
     public void reset() {
@@ -84,7 +84,7 @@ public class LevelNotifier extends BaseNotifier {
     }
 
     public void handleLevelUp(String skill, int level) {
-        if (isEnabled() && !plugin.isSpeedrunWorld() && checkLevelInterval(level) && currentLevels.get(skill) != null) {
+        if (isEnabled() && checkLevelInterval(level) && currentLevels.get(skill) != null) {
             if (level == currentLevels.get(skill)) {
                 return;
             }
