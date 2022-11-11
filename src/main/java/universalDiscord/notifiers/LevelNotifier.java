@@ -1,9 +1,9 @@
 package universalDiscord.notifiers;
 
 import lombok.extern.slf4j.Slf4j;
-import universalDiscord.message.MessageBuilder;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
+import universalDiscord.message.MessageBuilder;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class LevelNotifier extends BaseNotifier {
         String fullNotification = Utils.replaceCommonPlaceholders(plugin.config.levelNotifyMessage())
                 .replaceAll("%SKILL%", skillString);
 
-        MessageBuilder messageBuilder = new MessageBuilder(fullNotification, plugin.config.levelSendImage());
+        MessageBuilder messageBuilder = MessageBuilder.textAsEmbed(fullNotification, plugin.config.levelSendImage());
         plugin.messageHandler.sendMessage(messageBuilder);
 
         reset();

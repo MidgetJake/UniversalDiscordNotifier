@@ -2,9 +2,9 @@ package universalDiscord.notifiers;
 
 import net.runelite.api.events.ChatMessage;
 import net.runelite.client.util.Text;
-import universalDiscord.message.MessageBuilder;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
+import universalDiscord.message.MessageBuilder;
 import universalDiscord.notifiers.onevent.ChatMessageHandler;
 
 import javax.inject.Inject;
@@ -30,11 +30,11 @@ public class SlayerNotifier extends BaseNotifier implements ChatMessageHandler {
     @Override
     public void handleNotify() {
         String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.slayerNotifyMessage())
-                .replaceAll("%TASK%", slayerTask)
+                .replaceAll("%TASK%", Utils.asMarkdownWikiUrl(slayerTask))
                 .replaceAll("%TASKCOUNT%", slayerTasksCompleted)
                 .replaceAll("%POINTS%", slayerPoints);
 
-        MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.slayerSendImage());
+        MessageBuilder messageBuilder = MessageBuilder.textAsEmbed(notifyMessage, plugin.config.slayerSendImage());
 
         plugin.messageHandler.sendMessage(messageBuilder);
 

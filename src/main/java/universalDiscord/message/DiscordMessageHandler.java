@@ -8,6 +8,8 @@ import okhttp3.*;
 import okhttp3.internal.annotations.EverythingIsNonNull;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
+import universalDiscord.message.discord.Embed;
+import universalDiscord.message.discord.Image;
 
 import javax.inject.Inject;
 import java.awt.image.BufferedImage;
@@ -25,37 +27,41 @@ public class DiscordMessageHandler {
     }
 
     public void sendMessage(MessageBuilder messageBuilder) {
-        DiscordMessageBody messageBody = new DiscordMessageBody();
-        messageBody.setContent(messageBuilder.text);
-
-        if (messageBuilder.beforeDiscordMessageSend != null) {
-            messageBuilder.beforeDiscordMessageSend.call(messageBody);
-        }
+        messageBuilder.setPlayerAsAuthorForEmbeds();
 
         MultipartBody.Builder reqBodyBuilder = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("payload_json", GSON.toJson(messageBody));
+                .setType(MultipartBody.FORM);
 
         if (messageBuilder.sendScreenImage) {
             plugin.drawManager.requestNextFrameListener(image -> {
                 BufferedImage bufferedImage = (BufferedImage) image;
                 byte[] imageBytes;
+                String filename = "screenshot.jpg";
                 try {
                     imageBytes = Utils.convertImageToByteArray(bufferedImage);
-                    reqBodyBuilder.addFormDataPart("file", "collectionImage.png",
-                            RequestBody.create(MediaType.parse("image/png"), imageBytes));
+                    reqBodyBuilder.addFormDataPart("file", filename,
+                            RequestBody.create(MediaType.parse("image/jpg"), imageBytes));
+
+
+                    // Puts the image inside the embed block
+                    messageBuilder.webhookBody.getEmbeds().stream().findFirst().ifPresent((embed -> embed.setImage(new Image("attachment://" + filename))));
                 } catch (IOException e) {
                     log.warn("There was an error creating bytes from captured image", e);
                     // Still send the message even if the image cannot be created
                 }
-
-                sendToMultiple(webhooks(), reqBodyBuilder);
+                sendToWebhooks(messageBuilder, reqBodyBuilder);
             });
 
         } else {
-            sendToMultiple(webhooks(), reqBodyBuilder);
+            sendToWebhooks(messageBuilder, reqBodyBuilder);
         }
     }
+
+    private void sendToWebhooks(MessageBuilder messageBuilder, MultipartBody.Builder reqBodyBuilder) {
+        reqBodyBuilder.addFormDataPart("payload_json", GSON.toJson(messageBuilder.webhookBody));
+        sendToMultiple(webhooks(), reqBodyBuilder);
+    }
+
 
     private ArrayList<HttpUrl> webhooks() {
         ArrayList<HttpUrl> urlList = new ArrayList<>();

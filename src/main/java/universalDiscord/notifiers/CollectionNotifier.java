@@ -2,9 +2,9 @@ package universalDiscord.notifiers;
 
 import net.runelite.api.events.ChatMessage;
 import net.runelite.client.util.Text;
-import universalDiscord.message.MessageBuilder;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
+import universalDiscord.message.MessageBuilder;
 import universalDiscord.notifiers.onevent.ChatMessageHandler;
 
 import javax.inject.Inject;
@@ -33,9 +33,9 @@ public class CollectionNotifier extends BaseNotifier implements ChatMessageHandl
 
     public void handleNotify() {
         String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.collectionNotifyMessage())
-                .replaceAll("%ITEM%", lastMatcher.group("itemName"));
+                .replaceAll("%ITEM%", Utils.asMarkdownWikiUrl(lastMatcher.group("itemName")));
 
-        MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.collectionSendImage());
+        MessageBuilder messageBuilder = MessageBuilder.textAsEmbed(notifyMessage, plugin.config.collectionSendImage());
         plugin.messageHandler.sendMessage(messageBuilder);
 
         reset();

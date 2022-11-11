@@ -34,12 +34,10 @@ public class UniversalDiscordPlugin extends Plugin {
     public Client client;
     @Inject
     public OkHttpClient httpClient;
-
     @Inject
     public DrawManager drawManager;
     @Inject
     public UniversalDiscordConfig config;
-
     @Inject
     public ItemManager itemManager;
 
@@ -56,7 +54,7 @@ public class UniversalDiscordPlugin extends Plugin {
 
     @Override
     protected void startUp() {
-        Utils.client = client;
+        Utils.plugin = this;
         log.info("Started up Universal Discord");
     }
 

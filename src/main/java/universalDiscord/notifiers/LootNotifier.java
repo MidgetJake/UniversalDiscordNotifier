@@ -7,15 +7,15 @@ import net.runelite.client.game.ItemStack;
 import net.runelite.client.plugins.loottracker.LootReceived;
 import net.runelite.client.util.QuantityFormatter;
 import net.runelite.http.api.loottracker.LootRecordType;
-import universalDiscord.message.DiscordMessageBody;
-import universalDiscord.message.MessageBuilder;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
+import universalDiscord.message.MessageBuilder;
+import universalDiscord.message.discord.Embed;
+import universalDiscord.message.discord.Image;
+import universalDiscord.message.discord.WebhookBody;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 
 public class LootNotifier extends BaseNotifier {
@@ -41,7 +41,7 @@ public class LootNotifier extends BaseNotifier {
     }
 
     public void handleNotify() {
-        List<DiscordMessageBody.Embed> embeds = new ArrayList<>();
+        WebhookBody webhookBody = new WebhookBody();
         StringBuilder lootMessage = new StringBuilder();
         long totalLootValue = 0;
 
@@ -52,9 +52,12 @@ public class LootNotifier extends BaseNotifier {
             long itemStackPrice = (long) price * quantity;
 
             ItemComposition itemComposition = plugin.itemManager.getItemComposition(itemId);
-            lootMessage.append(String.format("%s x %s (%s)\n", quantity, itemComposition.getName(), QuantityFormatter.quantityToStackSize(itemStackPrice)));
+            lootMessage.append(String.format("%s x %s (%s)\n", quantity, Utils.asMarkdownWikiUrl(itemComposition.getName()), QuantityFormatter.quantityToStackSize(itemStackPrice)));
             if (plugin.config.lootIcons()) {
-                embeds.add(new DiscordMessageBody.Embed(new DiscordMessageBody.UrlEmbed(Utils.getItemImageUrl(itemId))));
+                Embed embed = Embed.builder()
+                        .image(new Image(Utils.getItemImageUrl(itemId)))
+                        .build();
+                webhookBody.getEmbeds().add(embed);
             }
 
             totalLootValue += itemStackPrice;
@@ -64,11 +67,12 @@ public class LootNotifier extends BaseNotifier {
             String lootString = lootMessage.toString();
             String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.lootNotifyMessage())
                     .replaceAll("%LOOT%", lootString)
-                    .replaceAll("%SOURCE%", dropper)
+                    .replaceAll("%SOURCE%", Utils.asMarkdownWikiUrl(dropper))
                     .replaceAll("%TOTAL_VALUE%", QuantityFormatter.quantityToStackSize(totalLootValue))
                     .trim();
+            webhookBody.getEmbeds().add(0, Embed.builder().description(notifyMessage).build());
 
-            MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.lootSendImage(), (discordMessage) -> discordMessage.getEmbeds().addAll(embeds));
+            MessageBuilder messageBuilder = new MessageBuilder(webhookBody, plugin.config.lootSendImage());
             plugin.messageHandler.sendMessage(messageBuilder);
         }
 

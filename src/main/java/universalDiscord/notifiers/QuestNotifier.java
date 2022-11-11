@@ -31,9 +31,9 @@ public class QuestNotifier extends BaseNotifier implements WidgetLoadHandler {
 
     public void handleNotify() {
         String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.questNotifyMessage())
-                .replaceAll("%QUEST%", parseQuestWidget(lastQuestText));
+                .replaceAll("%QUEST%", Utils.asMarkdownWikiUrl(parseQuestWidget(lastQuestText)));
 
-        plugin.messageHandler.sendMessage(new MessageBuilder(notifyMessage, plugin.config.questSendImage()));
+        plugin.messageHandler.sendMessage(MessageBuilder.textAsEmbed(notifyMessage, plugin.config.questSendImage()));
 
         reset();
     }

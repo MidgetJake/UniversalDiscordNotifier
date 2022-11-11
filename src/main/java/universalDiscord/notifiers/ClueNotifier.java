@@ -1,6 +1,7 @@
 package universalDiscord.notifiers;
 
 import net.runelite.api.ItemComposition;
+import net.runelite.api.ItemID;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.WidgetLoaded;
 import net.runelite.api.widgets.Widget;
@@ -8,16 +9,17 @@ import net.runelite.api.widgets.WidgetID;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.util.QuantityFormatter;
 import net.runelite.client.util.Text;
-import universalDiscord.message.DiscordMessageBody;
-import universalDiscord.message.MessageBuilder;
+import universalDiscord.ClueType;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
+import universalDiscord.message.MessageBuilder;
+import universalDiscord.message.discord.Embed;
+import universalDiscord.message.discord.Image;
+import universalDiscord.message.discord.WebhookBody;
 import universalDiscord.notifiers.onevent.ChatMessageHandler;
 import universalDiscord.notifiers.onevent.WidgetLoadHandler;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,7 +48,7 @@ public class ClueNotifier extends BaseNotifier implements ChatMessageHandler, Wi
     }
 
     public void handleNotify() {
-        List<DiscordMessageBody.Embed> embeds = new ArrayList<>();
+        WebhookBody webhookBody = new WebhookBody();
         StringBuilder lootMessage = new StringBuilder();
         long totalClueValue = 0;
 
@@ -58,20 +60,31 @@ public class ClueNotifier extends BaseNotifier implements ChatMessageHandler, Wi
             ItemComposition itemComposition = plugin.itemManager.getItemComposition(itemId);
 
             if (plugin.config.clueShowItems()) {
-                embeds.add(new DiscordMessageBody.Embed(new DiscordMessageBody.UrlEmbed(Utils.getItemImageUrl(itemId))));
+                Embed embed = Embed.builder()
+                        .image(new Image(Utils.getItemImageUrl(itemId)))
+                        .build();
+                webhookBody.getEmbeds().add(embed);
             }
-            String itemText = String.format("%s x %s (%s)\n", quantity, itemComposition.getName(), QuantityFormatter.quantityToStackSize(itemStackPrice));
+            String itemText = String.format("%s x %s (%s)\n", quantity, Utils.asMarkdownWikiUrl(itemComposition.getName()), QuantityFormatter.quantityToStackSize(itemStackPrice));
             lootMessage.append(itemText);
         }
 
         if (totalClueValue > plugin.config.clueMinValue()) {
+            ClueType clueType = ClueType.valueOf(lastClueMatcher.group("scrollType").trim().toUpperCase());
+
             String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.clueNotifyMessage())
-                    .replaceAll("%CLUE%", lastClueMatcher.group("scrollType"))
+                    .replaceAll("%CLUE%", clueType.getMarkdownWikiUrl())
                     .replaceAll("%COUNT%", lastClueMatcher.group("scrollCount"))
                     .replaceAll("%TOTAL_VALUE%", QuantityFormatter.quantityToStackSize(totalClueValue))
                     .replaceAll("%LOOT%", lootMessage.toString().trim());
 
-            MessageBuilder messageBuilder = new MessageBuilder(notifyMessage, plugin.config.clueSendImage(), (discordMessageBody) -> discordMessageBody.getEmbeds().addAll(embeds));
+
+            webhookBody.getEmbeds().add(0, Embed.builder()
+                    .description(notifyMessage)
+                    .thumbnail(clueType.getCasketImage())
+                    .build());
+
+            MessageBuilder messageBuilder = new MessageBuilder(webhookBody, plugin.config.clueSendImage());
             plugin.messageHandler.sendMessage(messageBuilder);
         }
 
