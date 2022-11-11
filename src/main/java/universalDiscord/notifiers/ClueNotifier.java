@@ -1,6 +1,7 @@
 package universalDiscord.notifiers;
 
 import net.runelite.api.ItemComposition;
+import net.runelite.api.ItemID;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.WidgetLoaded;
 import net.runelite.api.widgets.Widget;
@@ -8,6 +9,7 @@ import net.runelite.api.widgets.WidgetID;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.util.QuantityFormatter;
 import net.runelite.client.util.Text;
+import universalDiscord.ClueType;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
 import universalDiscord.message.MessageBuilder;
@@ -68,12 +70,19 @@ public class ClueNotifier extends BaseNotifier implements ChatMessageHandler, Wi
         }
 
         if (totalClueValue > plugin.config.clueMinValue()) {
+            ClueType clueType = ClueType.valueOf(lastClueMatcher.group("scrollType").trim().toUpperCase());
+
             String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.clueNotifyMessage())
-                    .replaceAll("%CLUE%", Utils.asMarkdownWikiUrl(lastClueMatcher.group("scrollType")))
+                    .replaceAll("%CLUE%", clueType.getMarkdownWikiUrl())
                     .replaceAll("%COUNT%", lastClueMatcher.group("scrollCount"))
                     .replaceAll("%TOTAL_VALUE%", QuantityFormatter.quantityToStackSize(totalClueValue))
                     .replaceAll("%LOOT%", lootMessage.toString().trim());
-            webhookBody.getEmbeds().add(0, Embed.builder().description(notifyMessage).build());
+
+
+            webhookBody.getEmbeds().add(0, Embed.builder()
+                    .description(notifyMessage)
+                    .thumbnail(clueType.getCasketImage())
+                    .build());
 
             MessageBuilder messageBuilder = new MessageBuilder(webhookBody, plugin.config.clueSendImage());
             plugin.messageHandler.sendMessage(messageBuilder);

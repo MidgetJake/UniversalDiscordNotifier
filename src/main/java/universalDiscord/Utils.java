@@ -108,7 +108,10 @@ public class Utils {
     }
 
     public static String asMarkdownWikiUrl(String search) {
-        return "[" + search + "](" + getWikiUrl(search) + ")";
+        return asMarkdownWikiUrl(search, search);
+    }
+    public static String asMarkdownWikiUrl(String search, String linkText) {
+        return "[" + linkText + "](" + getWikiUrl(search) + ")";
     }
 
     public static String getWikiUrl(String search) {
