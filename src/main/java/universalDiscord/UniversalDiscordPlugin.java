@@ -54,10 +54,6 @@ public class UniversalDiscordPlugin extends Plugin {
     private final ClueNotifier clueNotifier = new ClueNotifier(this);
 
 
-    @Inject
-    private WorldService worldService;
-
-
     @Override
     protected void startUp() {
         Utils.plugin = this;
@@ -166,17 +162,5 @@ public class UniversalDiscordPlugin extends Plugin {
                 notifier.handleNotify();
             }
         }
-    }
-
-    final String SPEED_RUN_WORLD_ACTIVITY = "Speedrunning World";
-
-    public boolean isSpeedrunWorld() {
-        WorldResult worldresult = worldService.getWorlds();
-        if (worldresult == null) {
-            log.warn("Failed to get worlds, assuming non-speedrun world");
-            return false;
-        }
-        net.runelite.http.api.worlds.World w = worldresult.findWorld(client.getWorld());
-        return w.getActivity().equals(SPEED_RUN_WORLD_ACTIVITY);
     }
 }
