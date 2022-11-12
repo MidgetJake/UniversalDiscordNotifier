@@ -30,9 +30,16 @@ public class DeathNotifier extends BaseNotifier {
     @Override
     public boolean shouldNotify() {
         return isEnabled()
-                && lastActorDeath != null
-                && lastActorDeath.getActor() instanceof Player
-                && Objects.equals(((Player) lastActorDeath.getActor()).getId(), plugin.client.getLocalPlayer().getId());
+                && lastActorDeathIsLocalPlayer();
+    }
+
+    public boolean lastActorDeathIsLocalPlayer() {
+        if (lastActorDeath != null && lastActorDeath.getActor() instanceof Player) {
+            Player lastPlayerDeath = (Player) lastActorDeath.getActor();
+            return Objects.equals(lastPlayerDeath.getId(), plugin.client.getLocalPlayer().getId());
+        }
+
+        return false;
     }
 
     @Override
