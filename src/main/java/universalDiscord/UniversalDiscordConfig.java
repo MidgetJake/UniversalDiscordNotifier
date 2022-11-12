@@ -250,10 +250,21 @@ public interface UniversalDiscordConfig extends Config {
     }
 
     @ConfigItem(
+            keyName = "deathThumbnail",
+            name = "Thumbnail to use",
+            description = "Send a thumbnail with the notification",
+            position = 2,
+            section = deathSection
+    )
+    default DeathThumbnail deathThumbnail() {
+        return DeathThumbnail.DEATH;
+    }
+
+    @ConfigItem(
             keyName = "deathSendImage",
             name = "Send Image",
             description = "Send image with the notification",
-            position = 2,
+            position = 3,
             section = deathSection
     )
     default boolean deathSendImage() {
