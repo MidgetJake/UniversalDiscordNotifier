@@ -15,7 +15,7 @@ public class CollectionNotifierTest {
     @Test
     public void testCollectionLogRegex() {
         String[] itemNames = {
-                "Xerics talisman",
+                "Xeric's talisman (inert)",
                 "Jar of miasma",
                 "Saradomin's light",
                 "Craw's bow",
