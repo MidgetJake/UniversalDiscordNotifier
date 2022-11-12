@@ -1,5 +1,6 @@
 package universalDiscord.notifiers;
 
+import net.runelite.api.Player;
 import net.runelite.api.events.ActorDeath;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
@@ -29,8 +30,15 @@ public class DeathNotifier extends BaseNotifier {
     @Override
     public boolean shouldNotify() {
         return isEnabled()
-                && lastActorDeath != null
-                && Objects.equals(lastActorDeath.getActor().getName(), Utils.getPlayerName());
+                && lastActorDeathIsLocalPlayer();
+    }
+
+    public boolean lastActorDeathIsLocalPlayer() {
+        if (lastActorDeath != null) {
+            return Objects.equals(lastActorDeath.getActor(), plugin.client.getLocalPlayer());
+        }
+
+        return false;
     }
 
     @Override
