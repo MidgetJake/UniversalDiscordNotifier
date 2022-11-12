@@ -34,9 +34,8 @@ public class DeathNotifier extends BaseNotifier {
     }
 
     public boolean lastActorDeathIsLocalPlayer() {
-        if (lastActorDeath != null && lastActorDeath.getActor() instanceof Player) {
-            Player lastPlayerDeath = (Player) lastActorDeath.getActor();
-            return Objects.equals(lastPlayerDeath.getId(), plugin.client.getLocalPlayer().getId());
+        if (lastActorDeath != null) {
+            return Objects.equals(lastActorDeath.getActor(), plugin.client.getLocalPlayer());
         }
 
         return false;
