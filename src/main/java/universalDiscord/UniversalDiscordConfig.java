@@ -4,6 +4,8 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
+import universalDiscord.enums.DeathThumbnail;
+import universalDiscord.enums.PlayerUrlService;
 
 @ConfigGroup("universalDiscord")
 public interface UniversalDiscordConfig extends Config {
@@ -261,10 +263,21 @@ public interface UniversalDiscordConfig extends Config {
     }
 
     @ConfigItem(
+            keyName = "deathThumbnail",
+            name = "Thumbnail to use",
+            description = "Send a thumbnail with the notification",
+            position = 3,
+            section = deathSection
+    )
+    default DeathThumbnail deathThumbnail() {
+        return DeathThumbnail.DEATH;
+    }
+
+    @ConfigItem(
             keyName = "deathNotifMessage",
             name = "Notification Message",
             description = "The message to be sent through the webhook. Use %USERNAME% to insert your username",
-            position = 3,
+            position = 4,
             section = deathSection
     )
     default String deathNotifyMessage() {
