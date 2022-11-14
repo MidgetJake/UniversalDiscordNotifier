@@ -1,10 +1,12 @@
 package universalDiscord.notifiers;
 
+import net.runelite.api.ItemID;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.client.util.Text;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
 import universalDiscord.message.MessageBuilder;
+import universalDiscord.message.discord.Image;
 import universalDiscord.notifiers.onevent.ChatMessageHandler;
 
 import javax.inject.Inject;
@@ -32,10 +34,16 @@ public class CollectionNotifier extends BaseNotifier implements ChatMessageHandl
     }
 
     public void handleNotify() {
+        String itemName = lastMatcher.group("itemName");
         String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.collectionNotifyMessage())
-                .replaceAll("%ITEM%", Utils.asMarkdownWikiUrl(lastMatcher.group("itemName")));
+                .replaceAll("%ITEM%", Utils.asMarkdownWikiUrl(itemName));
 
         MessageBuilder messageBuilder = MessageBuilder.textAsEmbed(notifyMessage, plugin.config.collectionSendImage());
+        Integer itemId = plugin.itemSearcher.findItemId(itemName);
+        if (itemId != null) {
+            messageBuilder.setFirstThumbnail(new Image(Utils.getItemImageUrl(itemId)));
+        }
+
         plugin.messageHandler.sendMessage(messageBuilder);
 
         reset();
