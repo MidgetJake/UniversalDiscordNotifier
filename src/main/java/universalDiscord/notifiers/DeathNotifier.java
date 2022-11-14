@@ -25,7 +25,7 @@ public class DeathNotifier extends BaseNotifier {
         MessageBuilder messageBuilder = MessageBuilder.textAsEmbed(notifyMessage, plugin.config.deathSendImage());
         String thumbnailUrl = deathThumbNail().getThumbnailUrl();
         if (thumbnailUrl != null) {
-            messageBuilder.webhookBody.getEmbeds().stream().findFirst().ifPresent((embed -> embed.setThumbnail(new Image(thumbnailUrl))));
+            messageBuilder.setFirstThumbnail(new Image(thumbnailUrl));
         }
         plugin.messageHandler.sendMessage(messageBuilder);
 

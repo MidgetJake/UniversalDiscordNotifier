@@ -49,7 +49,7 @@ public class LevelNotifier extends BaseNotifier {
 
         MessageBuilder messageBuilder = MessageBuilder.textAsEmbed(fullNotification, plugin.config.levelSendImage());
         SkillThumbnail finalSkillThumb = skillThumb;
-        messageBuilder.webhookBody.getEmbeds().stream().findFirst().ifPresent((embed -> embed.setThumbnail(new Image(finalSkillThumb.getThumbnailUrl()))));
+        messageBuilder.setFirstThumbnail(new Image(finalSkillThumb.getThumbnailUrl()));
         plugin.messageHandler.sendMessage(messageBuilder);
 
         reset();
