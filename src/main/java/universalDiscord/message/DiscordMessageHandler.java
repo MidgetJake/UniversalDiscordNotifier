@@ -8,7 +8,6 @@ import okhttp3.*;
 import okhttp3.internal.annotations.EverythingIsNonNull;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
-import universalDiscord.message.discord.Embed;
 import universalDiscord.message.discord.Image;
 
 import javax.inject.Inject;
