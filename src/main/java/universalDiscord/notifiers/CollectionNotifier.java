@@ -5,6 +5,7 @@ import net.runelite.client.util.Text;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
 import universalDiscord.message.MessageBuilder;
+import universalDiscord.message.discord.Image;
 import universalDiscord.notifiers.onevent.ChatMessageHandler;
 
 import javax.inject.Inject;
@@ -12,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CollectionNotifier extends BaseNotifier implements ChatMessageHandler {
-    private static final Pattern COLLECTION_LOG_REGEX = Pattern.compile("New item added to your collection log: (?<itemName>[\\w,\\s-.]+)");
+    public static final Pattern COLLECTION_LOG_REGEX = Pattern.compile("New item added to your collection log: (?<itemName>[\\w,\\s-.'()]+)");
 
     private Matcher lastMatcher;
 
@@ -32,10 +33,16 @@ public class CollectionNotifier extends BaseNotifier implements ChatMessageHandl
     }
 
     public void handleNotify() {
+        String itemName = lastMatcher.group("itemName");
         String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.collectionNotifyMessage())
-                .replaceAll("%ITEM%", Utils.asMarkdownWikiUrl(lastMatcher.group("itemName")));
+                .replaceAll("%ITEM%", Utils.asMarkdownWikiUrl(itemName));
 
         MessageBuilder messageBuilder = MessageBuilder.textAsEmbed(notifyMessage, plugin.config.collectionSendImage());
+        Integer itemId = plugin.itemSearcher.findItemId(itemName);
+        if (itemId != null) {
+            messageBuilder.setFirstThumbnail(new Image(Utils.getItemImageUrl(itemId)));
+        }
+
         plugin.messageHandler.sendMessage(messageBuilder);
 
         reset();
