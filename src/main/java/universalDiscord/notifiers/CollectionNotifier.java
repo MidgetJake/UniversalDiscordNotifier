@@ -1,6 +1,5 @@
 package universalDiscord.notifiers;
 
-import net.runelite.api.ItemID;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.client.util.Text;
 import universalDiscord.UniversalDiscordPlugin;

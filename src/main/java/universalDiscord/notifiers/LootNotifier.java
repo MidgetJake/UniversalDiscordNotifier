@@ -43,6 +43,8 @@ public class LootNotifier extends BaseNotifier {
     public void handleNotify() {
         WebhookBody webhookBody = new WebhookBody();
         StringBuilder lootMessage = new StringBuilder();
+        ItemComposition highestValueItem = null;
+        long highestValueStackPrice = 0;
         long totalLootValue = 0;
 
         for (ItemStack item : Utils.reduceItemStack(receivedLoot)) {
@@ -53,6 +55,12 @@ public class LootNotifier extends BaseNotifier {
 
             ItemComposition itemComposition = plugin.itemManager.getItemComposition(itemId);
             lootMessage.append(String.format("%s x %s (%s)\n", quantity, Utils.asMarkdownWikiUrl(itemComposition.getName()), QuantityFormatter.quantityToStackSize(itemStackPrice)));
+
+            if (highestValueStackPrice < itemStackPrice) {
+                highestValueStackPrice = itemStackPrice;
+                highestValueItem = itemComposition;
+            }
+
             if (plugin.config.lootIcons()) {
                 Embed embed = Embed.builder()
                         .image(new Image(Utils.getItemImageUrl(itemId)))
@@ -70,13 +78,22 @@ public class LootNotifier extends BaseNotifier {
                     .replaceAll("%SOURCE%", Utils.asMarkdownWikiUrl(dropper))
                     .replaceAll("%TOTAL_VALUE%", QuantityFormatter.quantityToStackSize(totalLootValue))
                     .trim();
-            webhookBody.getEmbeds().add(0, Embed.builder().description(notifyMessage).build());
+            webhookBody.getEmbeds().add(0,
+                    Embed.builder()
+                            .description(notifyMessage)
+                            .thumbnail(getThumbnail(highestValueItem))
+                            .build()
+            );
 
             MessageBuilder messageBuilder = new MessageBuilder(webhookBody, plugin.config.lootSendImage());
             plugin.messageHandler.sendMessage(messageBuilder);
         }
 
         reset();
+    }
+
+    private Image getThumbnail(ItemComposition highestValueItem) {
+        return new Image(Utils.getItemImageUrl(highestValueItem.getId()));
     }
 
     public void handleNpcLootReceived(NpcLootReceived npcLootReceived) {
