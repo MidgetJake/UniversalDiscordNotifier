@@ -16,9 +16,11 @@ import universalDiscord.message.discord.WebhookBody;
 
 import javax.inject.Inject;
 import java.util.Collection;
+import java.util.regex.Pattern;
 
 
 public class LootNotifier extends BaseNotifier {
+    final public Pattern CLUE_NAME_REGEX = Pattern.compile("Clue Scroll (\\w)");
 
     private Collection<ItemStack> receivedLoot;
     private String dropper;
@@ -41,6 +43,10 @@ public class LootNotifier extends BaseNotifier {
     }
 
     public void handleNotify() {
+        if (CLUE_NAME_REGEX.matcher(dropper).find()) {
+            reset();
+            return;
+        }
         WebhookBody webhookBody = new WebhookBody();
         StringBuilder lootMessage = new StringBuilder();
         ItemComposition highestValueItem = null;
@@ -78,12 +84,13 @@ public class LootNotifier extends BaseNotifier {
                     .replaceAll("%SOURCE%", Utils.asMarkdownWikiUrl(dropper))
                     .replaceAll("%TOTAL_VALUE%", QuantityFormatter.quantityToStackSize(totalLootValue))
                     .trim();
-            webhookBody.getEmbeds().add(0,
-                    Embed.builder()
-                            .description(notifyMessage)
-                            .thumbnail(getThumbnail(highestValueItem))
-                            .build()
-            );
+            Embed.EmbedBuilder embedBuilder = Embed.builder()
+                    .description(notifyMessage);
+            if (highestValueItem != null) {
+                embedBuilder.thumbnail(getThumbnail(highestValueItem));
+            }
+
+            webhookBody.getEmbeds().add(0, embedBuilder.build());
 
             MessageBuilder messageBuilder = new MessageBuilder(webhookBody, plugin.config.lootSendImage());
             plugin.messageHandler.sendMessage(messageBuilder);
