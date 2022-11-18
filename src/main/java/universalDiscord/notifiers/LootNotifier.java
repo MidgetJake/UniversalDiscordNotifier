@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 
 public class LootNotifier extends BaseNotifier {
-    final public Pattern CLUE_NAME_REGEX = Pattern.compile("Clue Scroll (\\w)");
+    final public Pattern CLUE_NAME_REGEX = Pattern.compile("Clue Scroll \\(\\w\\)");
 
     private Collection<ItemStack> receivedLoot;
     private String dropper;
