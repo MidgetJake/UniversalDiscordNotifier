@@ -1,9 +1,11 @@
 package universalDiscord.notifiers;
 
 import net.runelite.api.events.ActorDeath;
+import universalDiscord.enums.DeathThumbnail;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
 import universalDiscord.message.MessageBuilder;
+import universalDiscord.message.discord.Image;
 
 import javax.inject.Inject;
 import java.util.Objects;
@@ -21,6 +23,10 @@ public class DeathNotifier extends BaseNotifier {
         String notifyMessage = Utils.replaceCommonPlaceholders(plugin.config.deathNotifyMessage());
 
         MessageBuilder messageBuilder = MessageBuilder.textAsEmbed(notifyMessage, plugin.config.deathSendImage());
+        String thumbnailUrl = deathThumbNail().getThumbnailUrl();
+        if (thumbnailUrl != null) {
+            messageBuilder.setFirstThumbnail(new Image(thumbnailUrl));
+        }
         plugin.messageHandler.sendMessage(messageBuilder);
 
         reset();
@@ -29,8 +35,19 @@ public class DeathNotifier extends BaseNotifier {
     @Override
     public boolean shouldNotify() {
         return isEnabled()
-                && lastActorDeath != null
-                && Objects.equals(lastActorDeath.getActor().getName(), Utils.getPlayerName());
+                && lastActorDeathIsLocalPlayer();
+    }
+
+    public boolean lastActorDeathIsLocalPlayer() {
+        if (lastActorDeath != null) {
+            return Objects.equals(lastActorDeath.getActor(), plugin.client.getLocalPlayer());
+        }
+
+        return false;
+    }
+
+    public DeathThumbnail deathThumbNail() {
+        return plugin.config.deathThumbnail();
     }
 
     @Override

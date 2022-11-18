@@ -4,6 +4,7 @@ import lombok.NonNull;
 import universalDiscord.Utils;
 import universalDiscord.message.discord.Author;
 import universalDiscord.message.discord.Embed;
+import universalDiscord.message.discord.Image;
 import universalDiscord.message.discord.WebhookBody;
 
 public class MessageBuilder {
@@ -24,6 +25,10 @@ public class MessageBuilder {
     public MessageBuilder(WebhookBody webhookBody, boolean sendScreenImage) {
         this.webhookBody = webhookBody;
         this.sendScreenImage = sendScreenImage;
+    }
+
+    public void setFirstThumbnail(Image image) {
+        webhookBody.getEmbeds().stream().findFirst().ifPresent((embed -> embed.setThumbnail(image)));
     }
 
     public void setPlayerAsAuthorForEmbeds() {
