@@ -53,8 +53,8 @@ public class ClueNotifier extends BaseNotifier implements ChatMessageHandler, Wi
 
         for (Integer itemId : clueItems.keySet()) {
             int quantity = clueItems.get(itemId);
-            int price = plugin.itemManager.getItemPrice(itemId);
-            long itemStackPrice = (long) price * quantity;
+            long price = plugin.itemManager.getItemPrice(itemId);
+            long itemStackPrice = price * quantity;
             totalClueValue += itemStackPrice;
             ItemComposition itemComposition = plugin.itemManager.getItemComposition(itemId);
 

@@ -56,8 +56,8 @@ public class LootNotifier extends BaseNotifier {
         for (ItemStack item : Utils.reduceItemStack(receivedLoot)) {
             int itemId = item.getId();
             int quantity = item.getQuantity();
-            int price = plugin.itemManager.getItemPrice(itemId);
-            long itemStackPrice = (long) price * quantity;
+            long price = plugin.itemManager.getItemPrice(itemId);
+            long itemStackPrice = price * quantity;
 
             ItemComposition itemComposition = plugin.itemManager.getItemComposition(itemId);
             lootMessage.append(String.format("%s x %s (%s)\n", quantity, Utils.asMarkdownWikiUrl(itemComposition.getName()), QuantityFormatter.quantityToStackSize(itemStackPrice)));
