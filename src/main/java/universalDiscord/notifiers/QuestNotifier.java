@@ -2,9 +2,8 @@ package universalDiscord.notifiers;
 
 import com.google.common.collect.ImmutableList;
 import net.runelite.api.events.WidgetLoaded;
+import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetID;
-import net.runelite.api.widgets.WidgetInfo;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
 import universalDiscord.message.MessageBuilder;
@@ -43,9 +42,9 @@ public class QuestNotifier extends BaseNotifier implements WidgetLoadHandler {
 
     @Override
     public void handleWidgetLoaded(WidgetLoaded widgetLoaded) {
-        if (widgetLoaded.getGroupId() == WidgetID.QUEST_COMPLETED_GROUP_ID) {
+        if (widgetLoaded.getGroupId() == InterfaceID.QUESTSCROLL) {
             if (plugin.config.notifyQuest()) {
-                Widget quest = plugin.client.getWidget(WidgetInfo.QUEST_COMPLETED_NAME_TEXT);
+                Widget quest = plugin.client.getWidget(InterfaceID.Questscroll.QUEST_TITLE);
 
                 if (quest != null) {
                     lastQuestText = quest.getText();

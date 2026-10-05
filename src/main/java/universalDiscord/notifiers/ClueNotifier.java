@@ -3,9 +3,8 @@ package universalDiscord.notifiers;
 import net.runelite.api.ItemComposition;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.WidgetLoaded;
+import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetID;
-import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.util.QuantityFormatter;
 import net.runelite.client.util.Text;
 import universalDiscord.enums.ClueType;
@@ -106,8 +105,8 @@ public class ClueNotifier extends BaseNotifier implements ChatMessageHandler, Wi
 
     @Override
     public void handleWidgetLoaded(WidgetLoaded widgetLoaded) {
-        if (widgetLoaded.getGroupId() == WidgetID.CLUE_SCROLL_REWARD_GROUP_ID) {
-            Widget clue = plugin.client.getWidget(WidgetInfo.CLUE_SCROLL_REWARD_ITEM_CONTAINER);
+        if (widgetLoaded.getGroupId() == InterfaceID.TRAIL_REWARDSCREEN) {
+            Widget clue = plugin.client.getWidget(InterfaceID.TrailRewardscreen.ITEMS);
             if (clue != null) {
                 clueItems.clear();
                 Widget[] children = clue.getChildren();
