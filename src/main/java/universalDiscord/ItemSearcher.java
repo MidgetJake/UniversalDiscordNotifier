@@ -18,6 +18,9 @@ final public class ItemSearcher {
     private OkHttpClient okHttpClient;
     private Map<String, Integer> nameAndIds = new HashMap<>();
 
+    @Inject
+    private Gson gson;
+
     public void loadItemIdsAndNames() {
         Request request = new Request.Builder().url("https://static.runelite.net/cache/item/names.json").build();
         okHttpClient.newCall(request).enqueue(new Callback() {
@@ -28,7 +31,7 @@ final public class ItemSearcher {
 
             @Override
             public void onResponse(Call call, Response response) {
-                Gson gson = new Gson();
+
                 try {
                     Map<String, String> items = gson.fromJson(response.body().charStream(), Map.class);
                     filterNotedItems(items);
@@ -49,7 +52,6 @@ final public class ItemSearcher {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Gson gson = new Gson();
                 try {
                     Map<String, String> notes = gson.fromJson(response.body().charStream(), Map.class);
                     notes.keySet().forEach(items::remove);
