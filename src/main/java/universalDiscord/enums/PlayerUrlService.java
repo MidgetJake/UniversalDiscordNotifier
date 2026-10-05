@@ -1,4 +1,4 @@
-package universalDiscord;
+package universalDiscord.enums;
 
 public enum PlayerUrlService {
     NONE("None"),

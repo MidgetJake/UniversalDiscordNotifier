@@ -1,7 +1,6 @@
 package universalDiscord.notifiers;
 
 import net.runelite.api.ItemComposition;
-import net.runelite.api.ItemID;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.WidgetLoaded;
 import net.runelite.api.widgets.Widget;
@@ -9,7 +8,7 @@ import net.runelite.api.widgets.WidgetID;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.util.QuantityFormatter;
 import net.runelite.client.util.Text;
-import universalDiscord.ClueType;
+import universalDiscord.enums.ClueType;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
 import universalDiscord.message.MessageBuilder;

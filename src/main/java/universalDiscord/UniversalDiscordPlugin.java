@@ -1,5 +1,6 @@
 package universalDiscord;
 
+import com.google.inject.Guice;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
@@ -12,12 +13,10 @@ import net.runelite.client.events.NotificationFired;
 import net.runelite.client.events.NpcLootReceived;
 import net.runelite.client.events.PlayerLootReceived;
 import net.runelite.client.game.ItemManager;
-import net.runelite.client.game.WorldService;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.loottracker.LootReceived;
 import net.runelite.client.ui.DrawManager;
-import net.runelite.http.api.worlds.WorldResult;
 import okhttp3.OkHttpClient;
 import universalDiscord.message.DiscordMessageHandler;
 import universalDiscord.notifiers.*;
@@ -43,6 +42,9 @@ public class UniversalDiscordPlugin extends Plugin {
     @Inject
     public ItemManager itemManager;
 
+    @Inject
+    public ItemSearcher itemSearcher;
+
     public final DiscordMessageHandler messageHandler = new DiscordMessageHandler(this);
     private final CollectionNotifier collectionNotifier = new CollectionNotifier(this);
     private final PetNotifier petNotifier = new PetNotifier(this);
@@ -57,6 +59,8 @@ public class UniversalDiscordPlugin extends Plugin {
     @Override
     protected void startUp() {
         Utils.plugin = this;
+        itemSearcher.loadItemIdsAndNames();
+
         log.info("Started up Universal Discord");
     }
 
