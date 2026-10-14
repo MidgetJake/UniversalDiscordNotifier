@@ -31,14 +31,25 @@ public class LevelNotifier extends BaseNotifier {
         SkillThumbnail skillThumb = SkillThumbnail.OVERALL;
 
         for (String skill : levelledSkills) {
-            skillThumb = SkillThumbnail.valueOf(skill.toUpperCase());
-            if (index == levelledSkills.size()) {
-                skillThumb = SkillThumbnail.OVERALL;
-                skillMessage.append(" and ");
-            } else if (index > 0) {
-                skillMessage.append(", ");
+            try {
+                skillThumb = SkillThumbnail.valueOf(skill.toUpperCase());
+                if (index == levelledSkills.size()) {
+                    skillThumb = SkillThumbnail.OVERALL;
+                    skillMessage.append(" and ");
+                } else if (index > 0) {
+                    skillMessage.append(", ");
+                }
+            } catch (Exception e) {
+                // For some reason if thumbnails fail again then just add to the message anyway
+                if (index == levelledSkills.size()) {
+                    skillMessage.append(" and ");
+                } else if (index > 0) {
+                    skillMessage.append(", ");
+                }
             }
+
             skillMessage.append(String.format("%s to %s", skill, currentLevels.get(skill)));
+
             index++;
         }
 

@@ -25,6 +25,7 @@ public enum SkillThumbnail implements ThumbnailUrl {
     RUNECRAFT("https://oldschool.runescape.wiki/images/Runecraft_icon_%28detail%29.png"),
     HUNTER("https://oldschool.runescape.wiki/images/Hunter_icon_%28detail%29.png"),
     CONSTRUCTION("https://oldschool.runescape.wiki/images/Construction_icon_%28detail%29.png"),
+    SAILING("https://oldschool.runescape.wiki/images/Sailing.png"),
     /**
      * The level of all skills added together.
      */
