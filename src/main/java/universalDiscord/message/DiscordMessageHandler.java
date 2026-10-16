@@ -8,16 +8,20 @@ import okhttp3.*;
 import okhttp3.internal.annotations.EverythingIsNonNull;
 import universalDiscord.UniversalDiscordPlugin;
 import universalDiscord.Utils;
+import universalDiscord.message.discord.Embed;
 import universalDiscord.message.discord.Image;
 
 import javax.inject.Inject;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
 public class DiscordMessageHandler {
+    private static final int MAX_EMBEDS = 10;
+
     private final UniversalDiscordPlugin plugin;
 
     @Inject
@@ -39,13 +43,13 @@ public class DiscordMessageHandler {
                 try {
                     imageBytes = Utils.convertImageToByteArray(bufferedImage);
                     reqBodyBuilder.addFormDataPart("file", filename,
-                            RequestBody.create(MediaType.parse("image/jpg"), imageBytes));
+                            RequestBody.create(MediaType.parse("image/jpeg"), imageBytes));
 
 
                     // Puts the image inside the embed block
                     messageBuilder.webhookBody.getEmbeds().stream().findFirst().ifPresent((embed -> embed.setImage(new Image("attachment://" + filename))));
                 } catch (IOException e) {
-                    log.warn("There was an error creating bytes from captured image", e);
+                    log.warn("UniversalDiscordError: There was an error creating bytes from captured image", e);
                     // Still send the message even if the image cannot be created
                 }
                 sendToWebhooks(messageBuilder, reqBodyBuilder);
@@ -57,6 +61,10 @@ public class DiscordMessageHandler {
     }
 
     private void sendToWebhooks(MessageBuilder messageBuilder, MultipartBody.Builder reqBodyBuilder) {
+        List<Embed> embeds = messageBuilder.webhookBody.getEmbeds();
+        if (embeds.size() > MAX_EMBEDS) {
+            embeds.subList(MAX_EMBEDS, embeds.size()).clear();
+        }
         reqBodyBuilder.addFormDataPart("payload_json", GSON.toJson(messageBuilder.webhookBody));
         sendToMultiple(webhooks(), reqBodyBuilder);
     }
@@ -73,7 +81,12 @@ public class DiscordMessageHandler {
             if (Objects.equals(urlString, "")) {
                 continue;
             }
-            urlList.add(HttpUrl.parse(urlString));
+            HttpUrl url = HttpUrl.parse(urlString.trim());
+            if (url == null) {
+                log.warn("UniversalDiscordError: Skipping invalid Discord webhook URL in config");
+                continue;
+            }
+            urlList.add(url);
         }
         return urlList;
     }
@@ -94,13 +107,18 @@ public class DiscordMessageHandler {
             @Override
             @EverythingIsNonNull
             public void onFailure(Call call, IOException e) {
-                log.warn("There was an error sending the webhook message", e);
+                log.warn("UniversalDiscordError: There was an error sending the webhook message", e);
             }
 
             @Override
             @EverythingIsNonNull
-            public void onResponse(Call call, Response response) {
-                response.close();
+            public void onResponse(Call call, Response response) throws IOException {
+                try (Response r = response) {
+                    if (!r.isSuccessful()) {
+                        ResponseBody responseBody = r.body();
+                        log.warn("UniversalDiscordError: Discord rejected webhook message ({}): {}", r.code(), responseBody == null ? "" : responseBody.string());
+                    }
+                }
             }
         });
     }

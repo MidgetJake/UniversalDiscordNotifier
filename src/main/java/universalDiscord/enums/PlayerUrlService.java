@@ -1,5 +1,8 @@
 package universalDiscord.enums;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 public enum PlayerUrlService {
     NONE("None"),
     OSRS_HISCORE("OSRS HiScore"),
@@ -13,7 +16,8 @@ public enum PlayerUrlService {
         this.name = name;
     }
 
-    public String playerUrl(String playerName) {
+    public String playerUrl(String rawPlayerName) {
+        String playerName = URLEncoder.encode(rawPlayerName, StandardCharsets.UTF_8).replace("+", "%20");
         switch (this) {
             case OSRS_HISCORE:
                 return "https://secure.runescape.com/m=hiscore_oldschool/hiscorepersonal.ws?user1=" + playerName;

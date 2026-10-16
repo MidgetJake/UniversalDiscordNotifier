@@ -93,12 +93,12 @@ public class UniversalDiscordPlugin extends Plugin {
 
     @Subscribe
     public void onStatChanged(StatChanged statChange) {
-        levelNotifier.handleLevelUp(statChange.getSkill().getName(), statChange.getLevel());
+        safely(levelNotifier, () -> levelNotifier.handleLevelUp(statChange.getSkill().getName(), statChange.getLevel()));
     }
 
     @Subscribe
     public void onGameTick(GameTick event) {
-        levelNotifier.onTick();
+        safely(levelNotifier, levelNotifier::onTick);
     }
 
     @Subscribe
@@ -113,44 +113,29 @@ public class UniversalDiscordPlugin extends Plugin {
                     clueNotifier,
             };
             for (ChatMessageHandler notifier : notifiers) {
-                notifier.handleChatMessage(message);
-                if (notifier.shouldNotify()) {
-                    notifier.handleNotify();
-                }
+                handle(notifier, () -> notifier.handleChatMessage(message));
             }
         }
     }
 
     @Subscribe
     public void onActorDeath(ActorDeath actor) {
-        deathNotifier.lastActorDeath = actor;
-        if (deathNotifier.shouldNotify()) {
-            deathNotifier.handleNotify();
-        }
+        handle(deathNotifier, () -> deathNotifier.lastActorDeath = actor);
     }
 
     @Subscribe
     public void onNpcLootReceived(NpcLootReceived npcLootReceived) {
-        lootNotifier.handleNpcLootReceived(npcLootReceived);
-        if (lootNotifier.shouldNotify()) {
-            lootNotifier.handleNotify();
-        }
+        handle(lootNotifier, () -> lootNotifier.handleNpcLootReceived(npcLootReceived));
     }
 
     @Subscribe
     public void onPlayerLootReceived(PlayerLootReceived playerLootReceived) {
-        lootNotifier.handlePlayerLootReceived(playerLootReceived);
-        if (lootNotifier.shouldNotify()) {
-            lootNotifier.handleNotify();
-        }
+        handle(lootNotifier, () -> lootNotifier.handlePlayerLootReceived(playerLootReceived));
     }
 
     @Subscribe
     public void onLootReceived(LootReceived lootReceived) {
-        lootNotifier.handleLootReceived(lootReceived);
-        if (lootNotifier.shouldNotify()) {
-            lootNotifier.handleNotify();
-        }
+        handle(lootNotifier, () -> lootNotifier.handleLootReceived(lootReceived));
     }
 
     @Subscribe
@@ -161,10 +146,25 @@ public class UniversalDiscordPlugin extends Plugin {
         };
 
         for (WidgetLoadHandler notifier : notifiers) {
-            notifier.handleWidgetLoaded(event);
+            handle(notifier, () -> notifier.handleWidgetLoaded(event));
+        }
+    }
+
+    private void handle(Notifier notifier, Runnable onEvent) {
+        safely(notifier, () -> {
+            onEvent.run();
             if (notifier.shouldNotify()) {
                 notifier.handleNotify();
             }
+        });
+    }
+
+    private void safely(Notifier notifier, Runnable action) {
+        try {
+            action.run();
+        } catch (Exception e) {
+            log.warn("UniversalDiscordError: {} failed to handle event", notifier.getClass().getSimpleName(), e);
+            notifier.reset();
         }
     }
 }

@@ -80,7 +80,7 @@ public class SlayerNotifier extends BaseNotifier implements ChatMessageHandler {
         }
     }
 
-    private void reset() {
+    public void reset() {
         slayerTask = null;
         slayerPoints = null;
         slayerTasksCompleted = null;

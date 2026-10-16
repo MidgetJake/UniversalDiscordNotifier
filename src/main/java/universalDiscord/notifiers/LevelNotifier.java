@@ -63,7 +63,7 @@ public class LevelNotifier extends BaseNotifier {
         messageBuilder.setFirstThumbnail(new Image(finalSkillThumb.getThumbnailUrl()));
         plugin.messageHandler.sendMessage(messageBuilder);
 
-        reset();
+        sendMessage = false;
     }
 
     @Override

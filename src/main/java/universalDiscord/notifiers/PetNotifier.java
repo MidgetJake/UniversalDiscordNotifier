@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PetNotifier extends BaseNotifier implements ChatMessageHandler {
-    private static final Pattern PET_REGEX = Pattern.compile("You have a funny feeling like you.*");
+    private static final Pattern PET_REGEX = Pattern.compile("You (?:have a funny feeling like you|feel something weird sneaking into your backpack).*");
 
     private Matcher lastPetMatcher;
 
@@ -49,7 +49,7 @@ public class PetNotifier extends BaseNotifier implements ChatMessageHandler {
         }
     }
 
-    private void reset() {
+    public void reset() {
         lastPetMatcher = null;
     }
 }

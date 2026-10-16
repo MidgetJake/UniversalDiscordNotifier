@@ -56,7 +56,7 @@ public class CollectionNotifier extends BaseNotifier implements ChatMessageHandl
         }
     }
 
-    private void reset() {
+    public void reset() {
         lastMatcher = null;
     }
 }

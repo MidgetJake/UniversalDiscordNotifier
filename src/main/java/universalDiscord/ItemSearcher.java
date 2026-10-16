@@ -26,7 +26,7 @@ final public class ItemSearcher {
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                log.warn("Failed to load item names and ids.");
+                log.warn("UniversalDiscordError: Failed to load item names and ids.");
             }
 
             @Override
@@ -36,7 +36,7 @@ final public class ItemSearcher {
                     Map<String, String> items = gson.fromJson(response.body().charStream(), Map.class);
                     filterNotedItems(items);
                 } catch (JsonSyntaxException | JsonIOException e) {
-                    log.error("UniversalDiscord failed to load names");
+                    log.error("UniversalDiscordError: Failed to load names");
                 }
             }
         });
@@ -47,7 +47,7 @@ final public class ItemSearcher {
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                log.warn("Failed to remove noted items.");
+                log.warn("UniversalDiscordError: Failed to remove noted items.");
             }
 
             @Override
@@ -56,7 +56,7 @@ final public class ItemSearcher {
                     Map<String, String> notes = gson.fromJson(response.body().charStream(), Map.class);
                     notes.keySet().forEach(items::remove);
                 } catch (JsonSyntaxException | JsonIOException e) {
-                    log.error("UniversalDiscord failed to filter noted items");
+                    log.error("UniversalDiscordError: Failed to filter noted items");
                 }
                 // Always set the items even when failing to filter noted items.
                 nameAndIds = items

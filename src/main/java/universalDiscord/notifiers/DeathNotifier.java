@@ -55,7 +55,7 @@ public class DeathNotifier extends BaseNotifier {
         return plugin.config.notifyDeath();
     }
 
-    private void reset() {
+    public void reset() {
         lastActorDeath = null;
     }
 }

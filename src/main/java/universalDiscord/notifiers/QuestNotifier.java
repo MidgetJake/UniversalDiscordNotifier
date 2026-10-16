@@ -93,7 +93,7 @@ public class QuestNotifier extends BaseNotifier implements WidgetLoadHandler {
         return plugin.config.notifyQuest() && !Utils.isQuestSpeedRunningWorld();
     }
 
-    private void reset() {
+    public void reset() {
         lastQuestText = null;
     }
 }

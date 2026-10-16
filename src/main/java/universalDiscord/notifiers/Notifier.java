@@ -4,4 +4,6 @@ public interface Notifier {
     boolean shouldNotify();
 
     void handleNotify();
+
+    void reset();
 }

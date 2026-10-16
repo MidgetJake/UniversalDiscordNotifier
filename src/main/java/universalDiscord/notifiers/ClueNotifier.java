@@ -22,7 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ClueNotifier extends BaseNotifier implements ChatMessageHandler, WidgetLoadHandler {
-    private static final Pattern CLUE_SCROLL_REGEX = Pattern.compile("You have completed (?<scrollCount>\\d+) (?<scrollType>\\w+) Treasure Trails\\.");
+    private static final Pattern CLUE_SCROLL_REGEX = Pattern.compile("You have completed (?<scrollCount>\\d+) (?<scrollType>\\w+) Treasure Trails?\\.");
 
     private Matcher lastClueMatcher;
     public HashMap<Integer, Integer> clueItems = new HashMap<>();
@@ -98,7 +98,7 @@ public class ClueNotifier extends BaseNotifier implements ChatMessageHandler, Wi
         }
     }
 
-    private void reset() {
+    public void reset() {
         lastClueMatcher = null;
         clueItems.clear();
     }

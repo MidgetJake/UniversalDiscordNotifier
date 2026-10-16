@@ -76,7 +76,7 @@ public class Utils {
 
     public static byte[] convertImageToByteArray(BufferedImage bufferedImage) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
+        ImageIO.write(bufferedImage, "jpg", byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
     }
 

@@ -121,7 +121,7 @@ public class LootNotifier extends BaseNotifier {
         receivedLoot = lootReceived.getItems();
     }
 
-    private void reset() {
+    public void reset() {
         dropper = null;
         receivedLoot = null;
     }
